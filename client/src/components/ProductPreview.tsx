@@ -26,14 +26,14 @@ interface Props {
 
 const UPPER_PATH =
   'M 50,174 ' +
-  'Q 38,152 42,118 ' +   // toe front face (slightly forward-leaning)
-  'Q 46,90 70,72 ' +     // toe box front
-  'Q 100,52 158,40 ' +   // toe box top → vamp climbing
-  'Q 196,32 234,38 ' +   // tongue peak (highest)
-  'Q 268,44 294,64 ' +   // vamp → quarter, sloping down
-  'Q 318,80 324,108 ' +  // heel counter curve
-  'L 326,174 ' +         // heel back — straight vertical line
-  'Z'                    // closes along sole top
+  'Q 36,160 40,126 ' +
+  'Q 42,104 72,86 ' +
+  'Q 110,74 158,58 ' +
+  'Q 196,52 234,58 ' +
+  'Q 268,62 294,78 ' +
+  'Q 318,92 324,118 ' +
+  'L 326,174 ' +
+  'Z'
 
 function ShoeTexture({ materialId }: { materialId: string }) {
   switch (materialId) {
@@ -128,7 +128,7 @@ function ShoeSVG({ colorHex, materialId }: { colorHex: string; materialId: strin
 
       {/* ── OUTSOLE (rubber, darkest bottom layer) ── */}
       <path
-        d="M 46,200 Q 40,216 64,220 L 308,220 Q 336,218 338,207 Q 340,195 314,190 L 54,190 Q 40,192 46,200Z"
+        d="M 46,198 Q 60,214 90,216 L 300,216 Q 330,214 336,202 Q 338,194 312,188 L 58,188 Q 44,190 46,198Z"
         fill="currentColor" opacity="0.95"
         stroke={outlineStroke} strokeWidth="0.8"
       />
@@ -175,13 +175,16 @@ function ShoeSVG({ colorHex, materialId }: { colorHex: string; materialId: strin
       />
 
       {/* ── ANKLE COLLAR ── */}
-      {/* outer padded ring */}
-      <ellipse cx="320" cy="118" rx="24" ry="34" fill="#bfc8d4" />
-      {/* inner opening (dark interior) */}
-      <ellipse cx="320" cy="120" rx="15" ry="24" fill="#a8b4c2" />
-      {/* collar highlight */}
-      <ellipse cx="313" cy="106" rx="8" ry="6"
-        fill="white" opacity="0.25" transform="rotate(-20 313 106)" />
+      {/* modern heel collar */}
+      <path
+        d="M300,92 Q322,88 330,112 Q334,136 322,156 Q314,164 300,160 Q292,138 292,112 Q292,100 300,92Z"
+        fill="#bfc8d4" opacity="0.55"
+      />
+      <path
+        d="M305,102 Q318,102 322,118 Q322,132 314,146 Q306,142 304,128 Q302,116 305,102Z"
+        fill="#a8b4c2" opacity="0.85"
+      />
+      <ellipse cx="308" cy="104" rx="6" ry="4" fill="white" opacity="0.25" />
 
       {/* ── TONGUE ── */}
       <path
