@@ -7,21 +7,49 @@ interface Props {
 }
 
 const SHOE_SVG = (
-  <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-    <ellipse cx="155" cy="160" rx="130" ry="22" fill="currentColor" opacity="0.15" />
+  <svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+    {/* sole */}
     <path
-      d="M40,150 Q30,100 60,75 Q100,50 160,55 Q210,58 240,80 Q265,100 265,140 Q220,155 155,158 Q90,160 40,150Z"
+      d="M30,158 Q30,172 50,175 L290,175 Q315,175 315,162 Q315,150 290,148 L30,148 Z"
+      fill="currentColor" opacity="0.5"
+    />
+    {/* midsole highlight */}
+    <path
+      d="M30,148 L290,148 Q310,148 313,155 Q290,145 30,145 Z"
+      fill="white" opacity="0.25"
+    />
+    {/* main upper */}
+    <path
+      d="M30,148 L32,110 Q35,75 70,60 Q100,48 135,46 Q175,44 205,52 Q235,60 255,80 Q275,98 285,120 L290,148 Z"
       fill="currentColor"
     />
+    {/* toe box */}
     <path
-      d="M40,150 Q30,110 58,80 Q75,65 95,70 Q80,95 75,130 Q55,142 40,150Z"
+      d="M30,148 L32,115 Q34,88 55,72 Q72,60 90,58 Q75,80 68,110 L60,148 Z"
+      fill="currentColor" opacity="0.75"
+    />
+    {/* collar opening */}
+    <path
+      d="M255,80 Q270,65 285,60 Q295,80 290,110 L285,120 Q275,98 255,80 Z"
       fill="currentColor" opacity="0.7"
     />
-    <rect x="115" y="65" width="85" height="65" rx="8" fill="white" opacity="0.2" />
-    <line x1="128" y1="78" x2="188" y2="78" stroke="white" strokeWidth="2.5" opacity="0.7" />
-    <line x1="128" y1="90" x2="188" y2="90" stroke="white" strokeWidth="2.5" opacity="0.7" />
-    <line x1="128" y1="102" x2="188" y2="102" stroke="white" strokeWidth="2.5" opacity="0.7" />
-    <line x1="128" y1="114" x2="188" y2="114" stroke="white" strokeWidth="2.5" opacity="0.7" />
+    {/* tongue */}
+    <path
+      d="M175,46 Q195,44 210,50 L205,100 Q195,105 180,105 Q165,105 160,100 Z"
+      fill="white" opacity="0.2"
+    />
+    {/* laces */}
+    <line x1="168" y1="60" x2="200" y2="57" stroke="white" strokeWidth="2.5" opacity="0.8" strokeLinecap="round"/>
+    <line x1="165" y1="72" x2="198" y2="69" stroke="white" strokeWidth="2.5" opacity="0.8" strokeLinecap="round"/>
+    <line x1="163" y1="84" x2="197" y2="81" stroke="white" strokeWidth="2.5" opacity="0.8" strokeLinecap="round"/>
+    <line x1="161" y1="96" x2="196" y2="93" stroke="white" strokeWidth="2.5" opacity="0.8" strokeLinecap="round"/>
+    {/* swoosh-style stripe */}
+    <path
+      d="M90,120 Q150,95 240,105 Q220,118 150,122 Q110,124 90,120 Z"
+      fill="white" opacity="0.2"
+    />
+    {/* drop shadow */}
+    <ellipse cx="165" cy="178" rx="135" ry="10" fill="currentColor" opacity="0.1" />
   </svg>
 )
 
