@@ -6,187 +6,248 @@ interface Props {
   config: ProductConfig
 }
 
-const UPPER_CLIP_PATH = "M48,168 Q44,138 52,108 Q64,72 100,52 Q138,32 185,28 Q228,24 260,42 Q288,58 298,90 Q308,118 305,168Z"
+// Upper outline — reused for clipPath and fill
+const UPPER_D =
+  'M42,170 Q36,142 44,114 Q56,80 90,58 Q126,36 175,28 Q220,22 258,36 Q292,50 312,80 Q330,108 326,148 L322,170Z'
 
-function MaterialOverlay({ materialId }: { materialId: string }) {
+function ShoeTexture({ materialId }: { materialId: string }) {
   switch (materialId) {
     case 'flyknit':
+      // Fine diagonal crosshatch — knit feel
       return (
-        <g clipPath="url(#shoe-clip)" opacity="0.22">
-          {Array.from({ length: 24 }).map((_, i) => (
-            <line key={`a${i}`} x1={-20 + i * 16} y1="20" x2={-20 + i * 16 + 150} y2="178" stroke="white" strokeWidth="1" />
+        <g clipPath="url(#upper-clip)" opacity="0.25">
+          {Array.from({ length: 28 }).map((_, i) => (
+            <line key={`f1-${i}`} x1={-30 + i * 14} y1="10" x2={-30 + i * 14 + 170} y2="195"
+              stroke="white" strokeWidth="0.9" />
           ))}
-          {Array.from({ length: 24 }).map((_, i) => (
-            <line key={`b${i}`} x1={-20 + i * 16 + 150} y1="20" x2={-20 + i * 16} y2="178" stroke="white" strokeWidth="1" />
+          {Array.from({ length: 28 }).map((_, i) => (
+            <line key={`f2-${i}`} x1={-30 + i * 14 + 170} y1="10" x2={-30 + i * 14} y2="195"
+              stroke="white" strokeWidth="0.9" />
           ))}
         </g>
       )
+
     case 'leather':
+      // Smooth with two glossy highlight reflections
       return (
-        <g clipPath="url(#shoe-clip)">
-          <ellipse cx="155" cy="85" rx="75" ry="32" fill="white" opacity="0.2" transform="rotate(-10 155 85)" />
-          <ellipse cx="115" cy="70" rx="32" ry="13" fill="white" opacity="0.16" transform="rotate(-6 115 70)" />
-          <ellipse cx="215" cy="100" rx="22" ry="9" fill="white" opacity="0.12" />
+        <g clipPath="url(#upper-clip)">
+          <ellipse cx="148" cy="78" rx="72" ry="26" fill="white" opacity="0.22"
+            transform="rotate(-14 148 78)" />
+          <ellipse cx="108" cy="64" rx="30" ry="11" fill="white" opacity="0.17"
+            transform="rotate(-10 108 64)" />
+          <ellipse cx="220" cy="105" rx="28" ry="10" fill="white" opacity="0.12"
+            transform="rotate(-8 220 105)" />
         </g>
       )
+
     case 'mesh':
+      // Honeycomb hex grid
       return (
-        <g clipPath="url(#shoe-clip)" opacity="0.24">
-          {Array.from({ length: 16 }).map((_, row) =>
-            Array.from({ length: 28 }).map((_, col) => (
-              <circle key={`${row}-${col}`} cx={30 + col * 11} cy={28 + row * 11} r="2" fill="white" />
-            ))
+        <g clipPath="url(#upper-clip)" opacity="0.28">
+          {Array.from({ length: 10 }).map((_, row) =>
+            Array.from({ length: 18 }).map((_, col) => {
+              const cx = 35 + col * 18 + (row % 2 === 0 ? 0 : 9)
+              const cy = 35 + row * 16
+              return (
+                <polygon
+                  key={`hex-${row}-${col}`}
+                  points={`${cx},${cy - 7} ${cx + 6},${cy - 3.5} ${cx + 6},${cy + 3.5} ${cx},${cy + 7} ${cx - 6},${cy + 3.5} ${cx - 6},${cy - 3.5}`}
+                  fill="none" stroke="white" strokeWidth="1"
+                />
+              )
+            })
           )}
         </g>
       )
+
     case 'canvas':
+      // Tight woven grid — canvas weave
       return (
-        <g clipPath="url(#shoe-clip)" opacity="0.16">
-          {Array.from({ length: 18 }).map((_, i) => (
-            <line key={`h${i}`} x1="20" y1={26 + i * 9} x2="320" y2={26 + i * 9} stroke="white" strokeWidth="2" />
+        <g clipPath="url(#upper-clip)" opacity="0.2">
+          {Array.from({ length: 22 }).map((_, i) => (
+            <line key={`ch-${i}`} x1="20" y1={18 + i * 8} x2="340" y2={18 + i * 8}
+              stroke="white" strokeWidth="2.2" />
           ))}
-          {Array.from({ length: 32 }).map((_, i) => (
-            <line key={`v${i}`} x1={20 + i * 9} y1="20" x2={20 + i * 9} y2="178" stroke="white" strokeWidth="0.8" />
+          {Array.from({ length: 40 }).map((_, i) => (
+            <line key={`cv-${i}`} x1={20 + i * 8} y1="10" x2={20 + i * 8} y2="195"
+              stroke="white" strokeWidth="0.9" />
           ))}
         </g>
       )
+
     case 'recycled':
+      // Diagonal wave bands — technical fabric
       return (
-        <g clipPath="url(#shoe-clip)" opacity="0.18">
-          {Array.from({ length: 14 }).map((_, i) => (
+        <g clipPath="url(#upper-clip)" opacity="0.22">
+          {Array.from({ length: 16 }).map((_, i) => (
             <path
-              key={`w${i}`}
-              d={`M20,${28 + i * 11} Q100,${20 + i * 11} 180,${28 + i * 11} Q260,${36 + i * 11} 320,${28 + i * 11}`}
+              key={`rw-${i}`}
+              d={`M10,${20 + i * 11} Q100,${11 + i * 11} 190,${20 + i * 11} Q280,${29 + i * 11} 350,${20 + i * 11}`}
               fill="none" stroke="white" strokeWidth="2"
             />
           ))}
+          {/* shimmer band */}
+          <ellipse cx="175" cy="95" rx="120" ry="18" fill="white" opacity="0.1"
+            transform="rotate(-8 175 95)" />
         </g>
       )
+
     default:
       return null
   }
 }
 
-const SHOE_SVG = (colorHex: string, materialId: string) => {
+function ShoeSVG({ colorHex, materialId }: { colorHex: string; materialId: string }) {
   const isLight = colorHex === '#F5F5F5'
-  const stroke = isLight ? '#aaa' : 'none'
-  const bg = isLight ? '#e2e8f0' : colorHex
+  const outlineStroke = isLight ? '#b0b8c4' : 'none'
+  const soleStroke = isLight ? '#9aa0aa' : 'none'
 
   return (
-    <svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+    <svg viewBox="0 0 380 230" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
       <defs>
-        <clipPath id="shoe-clip">
-          <path d={UPPER_CLIP_PATH} />
+        <clipPath id="upper-clip">
+          <path d={UPPER_D} />
         </clipPath>
       </defs>
 
       {/* Ground shadow */}
-      <ellipse cx="182" cy="228" rx="145" ry="10" fill="currentColor" opacity="0.1" />
+      <ellipse cx="190" cy="222" rx="152" ry="8" fill="currentColor" opacity="0.1" />
 
-      {/* === SOLE STACK (chunky 3-layer) === */}
-      {/* Outer rubber sole - bottom */}
-      <path d="M44,210 Q40,224 62,230 L285,230 Q318,228 320,216 Q320,204 295,200 L55,200 Q40,202 44,210Z"
-        fill="currentColor" opacity="0.95" stroke={stroke} strokeWidth="0.8" />
-      {/* Midsole layer 2 */}
-      <path d="M50,200 Q48,212 62,214 L290,214 Q315,212 316,204 L50,200Z"
-        fill="white" opacity="0.22" />
-      {/* Midsole layer 1 */}
-      <path d="M52,190 L302,190 Q318,190 320,200 L50,200 Q49,192 52,190Z"
-        fill="currentColor" opacity="0.65" stroke={stroke} strokeWidth="0.6" />
-      {/* Midsole layer top */}
-      <path d="M54,180 L300,180 Q316,180 318,190 L52,190 Q50,182 54,180Z"
-        fill="currentColor" opacity="0.5" stroke={stroke} strokeWidth="0.6" />
-      {/* Midsole highlight stripe */}
-      <path d="M55,182 L300,182 Q314,182 316,186 Q295,183 55,183Z"
-        fill="white" opacity="0.25" />
-
-      {/* === MAIN UPPER === */}
-      <path d={UPPER_CLIP_PATH}
-        fill="currentColor" stroke={stroke} strokeWidth="1.2" />
-
-      {/* Heel counter */}
-      <path d="M260,42 Q292,32 306,62 Q316,88 310,130 Q305,155 305,168 L298,90 Q288,58 260,42Z"
-        fill="currentColor" opacity="0.7" />
-
-      {/* Toe cap */}
-      <path d="M48,168 Q44,140 52,112 Q64,80 92,60 Q72,86 66,126 L56,168Z"
-        fill="currentColor" opacity="0.75" />
-
-      {/* Ankle collar padding */}
-      <ellipse cx="294" cy="118" rx="22" ry="32" fill={isLight ? '#c8d0da' : '#c8d0da'} />
-      <ellipse cx="294" cy="118" rx="15" ry="23" fill={isLight ? '#d8e0ea' : '#d8e0ea'} />
-
-      {/* Aglet holes */}
-      <circle cx="286" cy="100" r="4.5" fill="#c0c8d4" />
-      <circle cx="300" cy="98" r="4.5" fill="#c0c8d4" />
-
-      {/* Tongue */}
-      <path d="M168,28 Q194,24 214,32 L208,112 Q196,118 178,118 Q160,118 154,112Z"
-        fill="white" opacity="0.17" />
-
-      {/* Material texture */}
-      <MaterialOverlay materialId={materialId} />
-
-      {/* === LACES (5 rows with eyelets) === */}
-      {[0,1,2,3,4].map(i => (
-        <g key={i}>
-          <line x1={164 - i*3} y1={44 + i*14} x2={210 - i*2} y2={40 + i*14}
-            stroke="white" strokeWidth="2.8" opacity="0.88" strokeLinecap="round" />
-          <circle cx={160 - i*3} cy={44 + i*14} r="3.2" fill="white" opacity="0.55" />
-          <circle cx={213 - i*2} cy={40 + i*14} r="3.2" fill="white" opacity="0.55" />
-        </g>
+      {/* ── OUTSOLE (rubber bottom) ── */}
+      <path
+        d="M38,196 Q32,210 58,218 L295,218 Q330,216 333,204 Q335,192 308,187 L50,187 Q34,189 38,196Z"
+        fill="currentColor" opacity="0.92" stroke={soleStroke} strokeWidth="1"
+      />
+      {/* outsole tread lines */}
+      {[0, 1, 2].map(i => (
+        <line key={i} x1={70 + i * 65} y1="210" x2={110 + i * 65} y2="210"
+          stroke="white" strokeWidth="1.2" opacity="0.2" strokeLinecap="round" />
       ))}
 
-      {/* === SIDE PANEL DETAIL === */}
-      {/* Lower panel overlay (like Air Force panel) */}
-      <path d="M78,142 Q80,130 100,124 L260,126 Q285,128 295,138 Q265,148 215,150 Q145,152 78,142Z"
-        fill="white" opacity="0.14" />
-      {/* Panel border line */}
-      <path d="M78,142 Q145,152 215,150 Q265,148 295,138"
-        fill="none" stroke="white" strokeWidth="1" opacity="0.25" />
+      {/* ── MIDSOLE layer 2 ── */}
+      <path
+        d="M46,187 Q43,198 58,200 L300,200 Q326,198 328,190 L46,187Z"
+        fill="white" opacity="0.18"
+      />
 
-      {/* Swoosh-style stripe */}
-      <path d="M95,158 Q175,132 288,148 Q265,162 188,164 Q135,166 95,158Z"
-        fill="white" opacity="0.17" />
+      {/* ── MIDSOLE layer 1 ── */}
+      <path
+        d="M48,178 L308,178 Q328,178 330,187 L46,187 Q45,180 48,178Z"
+        fill="currentColor" opacity="0.6" stroke={soleStroke} strokeWidth="0.8"
+      />
 
-      {/* Toe stitching detail */}
-      <path d="M56,150 Q60,100 90,72"
-        fill="none" stroke="white" strokeWidth="1" opacity="0.2" strokeDasharray="3,3" />
+      {/* ── MIDSOLE top edge ── */}
+      <path
+        d="M50,170 L310,170 Q328,170 330,178 L48,178 Q47,172 50,170Z"
+        fill="currentColor" opacity="0.45" stroke={soleStroke} strokeWidth="0.7"
+      />
+
+      {/* midsole highlight line */}
+      <line x1="50" y1="172" x2="308" y2="172" stroke="white" strokeWidth="1" opacity="0.3" />
+
+      {/* ── MAIN UPPER ── */}
+      <path d={UPPER_D} fill="currentColor" stroke={outlineStroke} strokeWidth="1.2" />
+
+      {/* ── HEEL COUNTER (darker back section) ── */}
+      <path
+        d="M258,36 Q294,24 316,56 Q334,82 330,128 L326,148 L322,170 Q326,148 330,128 Q334,82 312,80 Q292,50 258,36Z"
+        fill="currentColor" opacity="0.68"
+      />
+
+      {/* ── TOE CAP ── */}
+      <path
+        d="M42,170 Q36,144 44,118 Q56,86 88,64 Q68,90 62,128 L52,170Z"
+        fill="currentColor" opacity="0.72"
+      />
+
+      {/* ── ANKLE COLLAR ── */}
+      {/* outer padding ring */}
+      <ellipse cx="314" cy="128" rx="26" ry="36" fill="#c8d2dc" />
+      {/* inner opening */}
+      <ellipse cx="314" cy="130" rx="17" ry="26" fill="#d8e2ec" />
+      {/* collar highlight */}
+      <ellipse cx="308" cy="116" rx="9" ry="6" fill="white" opacity="0.25" transform="rotate(-15 308 116)" />
+
+      {/* ── TONGUE ── */}
+      <path
+        d="M163,28 Q188,22 206,30 L200,112 Q188,120 175,120 Q162,120 155,112Z"
+        fill="white" opacity="0.16"
+      />
+      {/* tongue center ridge */}
+      <line x1="183" y1="30" x2="180" y2="112" stroke="white" strokeWidth="1" opacity="0.15" />
+
+      {/* ── MATERIAL TEXTURE (clipped to upper) ── */}
+      <ShoeTexture materialId={materialId} />
+
+      {/* ── LACES ── */}
+      {[0, 1, 2, 3, 4].map(i => {
+        const y = 44 + i * 14
+        const x1 = 158 - i * 3
+        const x2 = 204 - i * 2
+        return (
+          <g key={i}>
+            {/* lace bar */}
+            <line x1={x1} y1={y} x2={x2} y2={y - 2}
+              stroke="white" strokeWidth="3" opacity="0.85" strokeLinecap="round" />
+            {/* left eyelet */}
+            <circle cx={x1 - 4} cy={y} r="3.5" fill="none" stroke="white" strokeWidth="1.5" opacity="0.7" />
+            {/* right eyelet */}
+            <circle cx={x2 + 4} cy={y - 2} r="3.5" fill="none" stroke="white" strokeWidth="1.5" opacity="0.7" />
+          </g>
+        )
+      })}
+
+      {/* ── VAMP PANEL (side overlay panel) ── */}
+      <path
+        d="M76,144 Q82,132 106,126 L268,130 Q296,132 310,144 Q278,158 228,160 Q158,162 76,144Z"
+        fill="white" opacity="0.12"
+      />
+      <path
+        d="M76,144 Q158,162 228,160 Q278,158 310,144"
+        fill="none" stroke="white" strokeWidth="0.8" opacity="0.22"
+      />
+
+      {/* ── SWOOSH-STYLE DETAIL ── */}
+      <path
+        d="M92,160 Q185,136 308,155 Q284,168 205,170 Q148,172 92,160Z"
+        fill="white" opacity="0.14"
+      />
+
+      {/* ── TOE STITCH LINE ── */}
+      <path d="M52,155 Q56,108 88,76"
+        fill="none" stroke="white" strokeWidth="1" opacity="0.18" strokeDasharray="4,3" />
     </svg>
   )
 }
 
-const SHIRT_SVG = (colorHex: string) => {
-  const isLight = colorHex === '#F5F5F5'
-  const strokeColor = isLight ? '#c0c0c0' : 'none'
+const SHIRT_SVG = (isLight: boolean) => {
+  const stroke = isLight ? '#b0b8c4' : 'none'
   return (
     <svg viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
       <path
         d="M100,30 L60,70 L30,55 L20,100 L65,110 L65,250 L235,250 L235,110 L280,100 L270,55 L240,70 L200,30 Q175,50 150,50 Q125,50 100,30Z"
-        fill="currentColor" stroke={strokeColor} strokeWidth="1.2"
+        fill="currentColor" stroke={stroke} strokeWidth="1.2"
       />
-      <path d="M100,30 Q125,50 150,50 Q175,50 200,30 Q175,70 150,72 Q125,70 100,30Z" fill="currentColor" opacity="0.7" />
-      <path d="M60,70 L30,55 L20,100 L65,110 L65,90Z" fill="currentColor" opacity="0.8" />
-      <path d="M240,70 L270,55 L280,100 L235,110 L235,90Z" fill="currentColor" opacity="0.8" />
-      {/* shirt crease detail */}
-      <line x1="150" y1="80" x2="150" y2="240" stroke="white" strokeWidth="1" opacity="0.15" />
-      <line x1="120" y1="120" x2="115" y2="240" stroke="white" strokeWidth="1" opacity="0.1" />
-      <line x1="180" y1="120" x2="185" y2="240" stroke="white" strokeWidth="1" opacity="0.1" />
+      <path d="M100,30 Q125,50 150,50 Q175,50 200,30 Q175,70 150,72 Q125,70 100,30Z"
+        fill="currentColor" opacity="0.65" />
+      <path d="M60,70 L30,55 L20,100 L65,110 L65,90Z" fill="currentColor" opacity="0.75" />
+      <path d="M240,70 L270,55 L280,100 L235,110 L235,90Z" fill="currentColor" opacity="0.75" />
+      <line x1="150" y1="80" x2="150" y2="242" stroke="white" strokeWidth="1" opacity="0.12" />
     </svg>
   )
 }
 
-const PANTS_SVG = (colorHex: string) => {
-  const isLight = colorHex === '#F5F5F5'
-  const strokeColor = isLight ? '#c0c0c0' : 'none'
+const PANTS_SVG = (isLight: boolean) => {
+  const stroke = isLight ? '#b0b8c4' : 'none'
   return (
     <svg viewBox="0 0 300 320" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-      <rect x="50" y="20" width="200" height="40" rx="6" fill="currentColor" opacity="0.85" stroke={strokeColor} strokeWidth="1.2" />
-      <path d="M50,55 L50,260 Q90,310 130,260 L145,120 L150,55Z" fill="currentColor" stroke={strokeColor} strokeWidth="1.2" />
-      <path d="M250,55 L250,260 Q210,310 170,260 L155,120 L150,55Z" fill="currentColor" stroke={strokeColor} strokeWidth="1.2" />
-      <line x1="150" y1="55" x2="150" y2="120" stroke="white" strokeWidth="2" opacity="0.3" />
-      {/* pocket stitching */}
-      <path d="M65,80 Q95,78 95,110 L65,110Z" fill="none" stroke="white" strokeWidth="1" opacity="0.2" />
+      <rect x="50" y="20" width="200" height="42" rx="6"
+        fill="currentColor" opacity="0.85" stroke={stroke} strokeWidth="1.2" />
+      <path d="M50,58 L50,262 Q90,312 130,262 L145,122 L150,58Z"
+        fill="currentColor" stroke={stroke} strokeWidth="1.2" />
+      <path d="M250,58 L250,262 Q210,312 170,262 L155,122 L150,58Z"
+        fill="currentColor" stroke={stroke} strokeWidth="1.2" />
+      <line x1="150" y1="58" x2="150" y2="122" stroke="white" strokeWidth="2" opacity="0.25" />
     </svg>
   )
 }
@@ -198,43 +259,43 @@ export function ProductPreview({ config }: Props) {
   const isLight = colorHex === '#F5F5F5'
 
   const shapeMap: Record<ProductType, React.ReactNode> = {
-    shoe: SHOE_SVG(colorHex, config.materialId),
-    shirt: SHIRT_SVG(colorHex),
-    pants: PANTS_SVG(colorHex),
+    shoe: <ShoeSVG colorHex={colorHex} materialId={config.materialId} />,
+    shirt: SHIRT_SVG(isLight),
+    pants: PANTS_SVG(isLight),
   }
 
   return (
     <div
       className="relative flex flex-col items-center justify-center h-full rounded-2xl overflow-hidden"
-      style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)' }}
+      style={{ background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)' }}
       aria-label={`Preview of ${config.name}`}
     >
-      {/* subtle grid bg so white shows up */}
+      {/* dot grid when color is white so it doesn't vanish */}
       {isLight && (
         <div
           className="absolute inset-0 rounded-2xl"
           style={{
             backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)',
-            backgroundSize: '20px 20px',
-            opacity: 0.4,
+            backgroundSize: '18px 18px',
+            opacity: 0.5,
           }}
         />
       )}
 
       <div
-        className="relative w-72 h-64 flex items-center justify-center"
+        className="relative w-full h-64 flex items-center justify-center px-4"
         style={{ color: colorHex }}
       >
         {shapeMap[config.productType]}
       </div>
 
-      <div className="relative mt-4 flex gap-2 flex-wrap justify-center px-4">
+      <div className="relative mt-3 flex gap-2 flex-wrap justify-center px-4">
         <span
           className="px-3 py-1 rounded-full text-xs font-semibold shadow-sm"
           style={{
             backgroundColor: colorHex,
             color: isLight ? '#333' : 'white',
-            border: isLight ? '1px solid #ccc' : 'none',
+            border: isLight ? '1.5px solid #b0b8c4' : 'none',
           }}
         >
           {color?.name}
