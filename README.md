@@ -1,120 +1,244 @@
-# Product Design Configurator
+# 🎨 Product Design Configurator
 
-A real-time product customization tool for footwear, tops, and bottoms. Configure color, material, and product type with an instant live preview, save your design to the database, and share it with anyone via a unique URL.
+<div align="center">
+
+![React](https://img.shields.io/badge/React_18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![AWS S3](https://img.shields.io/badge/AWS_S3-FF9900?style=for-the-badge&logo=amazons3&logoColor=white)
+![Jest](https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=jest&logoColor=white)
+
+**A real-time product customization tool — configure color, material, and product type with an instant live preview. Save your design and share it with anyone via a unique URL.**
+
+[🚀 Live Demo](https://pdc-client-xxxx.onrender.com) · [📦 API](https://pdc-server-s19t.onrender.com/api/health) · [🐛 Report Bug](https://github.com/2000090079/product-design-configurator/issues)
+
+</div>
 
 ---
 
-## Tech Stack
+## ✨ Features
 
-| Layer     | Technology                        |
-|-----------|-----------------------------------|
-| Frontend  | React 18, TypeScript, Tailwind CSS, Vite |
-| Backend   | Node.js, Express, TypeScript      |
-| Database  | MongoDB (Mongoose)                |
-| Storage   | AWS S3 (image uploads)            |
-| Testing   | Jest, React Testing Library       |
+| Feature | Description |
+|---|---|
+| 🖼️ **Live Preview** | SVG product shape updates instantly as you configure |
+| 🎨 **Color Picker** | 8 curated colorways with accessible ring selection |
+| 🧵 **Material Selector** | 5 materials — Flyknit, Leather, Mesh, Canvas, Recycled Poly |
+| 👟 **Product Types** | Footwear, Tops, and Bottoms |
+| 💾 **Save & Share** | Saves to MongoDB, generates a unique shareable URL |
+| ♿ **Accessible** | Full ARIA roles, keyboard nav, focus-visible rings |
+| 📱 **Responsive** | Stacked on mobile, side-by-side on desktop |
 
 ---
 
-## Getting Started
+## 🖥️ UI Overview
 
-### 1. Clone the repo
+```
+┌─────────────────────────────────────────────────────┐
+│  Design Studio                     Real-time preview │
+├──────────────────────┬──────────────────────────────┤
+│                      │                              │
+│  Design Name         │                              │
+│  ┌──────────────┐    │         👟                   │
+│  │ My Design    │    │    [SVG Preview]             │
+│  └──────────────┘    │                              │
+│                      │    ● Chalk White             │
+│  Product Category    │    ● Flyknit                 │
+│  [Footwear][Top]     │                              │
+│  [Bottoms]           │                              │
+│                      │                              │
+│  Color               │                              │
+│  ⬤ ⬤ ⬤ ⬤ ⬤ ⬤ ⬤ ⬤   │                              │
+│                      │                              │
+│  Material            │                              │
+│  ▶ Flyknit           │                              │
+│    Leather           │                              │
+│    Mesh              │                              │
+│                      │                              │
+│  [Save & Get Link]   │                              │
+│                      │                              │
+│  🔗 your-link-here   │                              │
+└──────────────────────┴──────────────────────────────┘
+```
+
+---
+
+## 🗂️ Project Structure
+
+```
+product-design-configurator/
+├── client/                        # React + TypeScript + Vite
+│   └── src/
+│       ├── components/
+│       │   ├── ColorPicker.tsx        # 8-color accessible picker
+│       │   ├── MaterialSelector.tsx   # Material option list
+│       │   ├── ProductPreview.tsx     # Live SVG preview
+│       │   ├── ProductTypeSelector.tsx
+│       │   ├── ConfigNameInput.tsx
+│       │   └── SharePanel.tsx         # Copy-to-clipboard share link
+│       ├── hooks/
+│       │   └── useConfigurator.ts     # All config state + save logic
+│       ├── pages/
+│       │   ├── ConfiguratorPage.tsx   # Main configurator view
+│       │   └── SharedConfigPage.tsx   # Read-only shared design view
+│       ├── lib/
+│       │   └── api.ts                 # Env-aware fetch wrapper
+│       ├── data/options.ts            # Colors, materials, product types
+│       └── types/index.ts             # Shared TS interfaces
+│
+├── server/                        # Node.js + Express + TypeScript
+│   └── src/
+│       ├── models/
+│       │   └── Configuration.ts       # Mongoose schema
+│       ├── routes/
+│       │   ├── configurations.ts      # POST /save, GET /share/:id
+│       │   └── uploads.ts             # POST /upload → AWS S3
+│       └── index.ts                   # App entry, MongoDB connect
+│
+├── render.yaml                    # Render deploy config
+└── package.json                   # Root scripts
+```
+
+---
+
+## ⚙️ Tech Stack
+
+### Frontend
+- **React 18** — component-based UI with hooks
+- **TypeScript** — strict typing across all components
+- **Tailwind CSS** — utility-first responsive styling
+- **Vite** — lightning-fast dev server and build tool
+- **React Router v6** — client-side routing for share links
+
+### Backend
+- **Node.js + Express** — REST API server
+- **TypeScript** — typed routes, models, middleware
+- **Mongoose** — MongoDB ODM with schema validation
+- **nanoid** — generates unique 10-char share IDs
+- **Multer + AWS S3** — multipart image upload pipeline
+
+### Testing
+- **Jest** — unit test runner
+- **React Testing Library** — component behavior tests
+- **@testing-library/jest-dom** — custom DOM matchers
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+
+- MongoDB (local or Atlas)
+- AWS S3 bucket (optional — only for image uploads)
+
+### 1. Clone
 
 ```bash
-git clone https://github.com/your-username/product-design-configurator.git
+git clone https://github.com/2000090079/product-design-configurator.git
 cd product-design-configurator
 ```
 
-### 2. Install dependencies
+### 2. Install all dependencies
 
 ```bash
 npm run install:all
 ```
 
-### 3. Set environment variables
-
-Copy the example file and fill in your values:
+### 3. Configure environment
 
 ```bash
 cp server/.env.example server/.env
 ```
 
-Edit `server/.env`:
+Open `server/.env` and fill in:
 
-```
+```env
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/design-configurator
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
+
+# Optional — only needed for /api/uploads
+AWS_ACCESS_KEY_ID=your_key
+AWS_SECRET_ACCESS_KEY=your_secret
 AWS_REGION=us-east-1
-S3_BUCKET_NAME=your-bucket-name
+S3_BUCKET_NAME=your-bucket
 ```
 
-### 4. Run the app
-
-In two separate terminals:
+### 4. Start dev servers
 
 ```bash
-# Terminal 1 — API server
+# Terminal 1 — backend
 npm run dev:server
 
-# Terminal 2 — Vite dev server
+# Terminal 2 — frontend
 npm run dev:client
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+Open **http://localhost:5173**
 
 ---
 
-## Features
-
-- Choose between three product categories: Footwear, Tops, and Bottoms
-- Pick from 8 curated colorways with real-time SVG preview
-- Select from 5 materials, each with a short description
-- Name your design (up to 60 characters)
-- Save to MongoDB and get a shareable link instantly
-- Shareable link renders a read-only view of the saved configuration
-- Image upload to S3 via `/api/uploads` (optional, for custom thumbnails)
-- Fully accessible — ARIA roles, `aria-pressed`, `aria-selected`, `role="alert"`
-
----
-
-## Folder Structure
-
-```
-product-design-configurator/
-├── client/
-│   ├── src/
-│   │   ├── __mocks__/       # Jest style mock
-│   │   ├── __tests__/       # Component tests
-│   │   ├── components/      # UI components
-│   │   ├── data/            # Static color/material options
-│   │   ├── hooks/           # useConfigurator hook
-│   │   ├── pages/           # ConfiguratorPage, SharedConfigPage
-│   │   └── types/           # Shared TypeScript types
-│   ├── index.html
-│   ├── jest.config.ts
-│   ├── tailwind.config.js
-│   └── vite.config.ts
-├── server/
-│   ├── src/
-│   │   ├── models/          # Mongoose Configuration model
-│   │   └── routes/          # configurations.ts, uploads.ts
-│   ├── .env.example
-│   └── tsconfig.json
-└── package.json
-```
-
----
-
-## Testing
+## 🧪 Testing
 
 ```bash
 npm test
 ```
 
-Runs Jest with `@testing-library/react`. Tests cover:
+| Test File | Coverage |
+|---|---|
+| `ColorPicker.test.tsx` | Renders all colors, aria-selected, onChange |
+| `ProductTypeSelector.test.tsx` | All types render, aria-pressed, onChange |
+| `MaterialSelector.test.tsx` | All materials render, onChange on click |
 
-- `ColorPicker` — renders options, aria-selected state, onChange firing
-- `ProductTypeSelector` — renders all types, aria-pressed, onChange
-- `MaterialSelector` — renders all materials, onChange on click
+---
+
+## 🌐 API Reference
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/configurations` | Save config → returns `shareId` |
+| `GET` | `/api/configurations/share/:shareId` | Fetch saved config by share ID |
+| `POST` | `/api/uploads` | Upload image to S3 → returns URL |
+| `GET` | `/api/health` | Health check |
+
+### Example — Save a configuration
+
+```bash
+curl -X POST https://pdc-server-s19t.onrender.com/api/configurations \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productType": "shoe",
+    "colorId": "velocity-red",
+    "materialId": "flyknit",
+    "name": "Summer Runner Pro"
+  }'
+```
+
+**Response:**
+```json
+{
+  "shareId": "aB3xKp92Lm",
+  "_id": "..."
+}
+```
+
+---
+
+## ☁️ Deployment
+
+Deployed on **Render** using `render.yaml`:
+
+- **Frontend** (Static Site) — auto-deploys on push to `main`
+- **Backend** (Web Service) — Node.js, connects to MongoDB Atlas
+
+| Service | URL |
+|---|---|
+| Frontend | https://pdc-client-xxxx.onrender.com |
+| Backend | https://pdc-server-s19t.onrender.com |
+
+---
+
+<div align="center">
+  <sub>Built with React, TypeScript, and a lot of ☕</sub>
+</div>
