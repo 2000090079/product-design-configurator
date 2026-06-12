@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { SavedConfig } from '../types'
 import { ProductPreview } from '../components/ProductPreview'
 import { COLOR_OPTIONS, MATERIAL_OPTIONS, PRODUCT_TYPES } from '../data/options'
+import { api } from '../lib/api'
 
 export function SharedConfigPage() {
   const { shareId } = useParams<{ shareId: string }>()
@@ -12,7 +13,7 @@ export function SharedConfigPage() {
 
   useEffect(() => {
     if (!shareId) return
-    fetch(`/api/configurations/share/${shareId}`)
+    api.get(`/api/configurations/share/${shareId}`)
       .then(res => {
         if (res.status === 404) { setNotFound(true); return null }
         return res.json()

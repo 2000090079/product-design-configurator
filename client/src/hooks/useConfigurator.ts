@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { ProductConfig, ProductType } from '../types'
 import { COLOR_OPTIONS, MATERIAL_OPTIONS } from '../data/options'
+import { api } from '../lib/api'
 
 const DEFAULT_CONFIG: ProductConfig = {
   productType: 'shoe',
@@ -38,11 +39,7 @@ export function useConfigurator() {
     setIsSaving(true)
     setError(null)
     try {
-      const res = await fetch('/api/configurations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(config),
-      })
+      const res = await api.post('/api/configurations', config)
       if (!res.ok) throw new Error('Failed to save')
       const data = await res.json()
       const url = `${window.location.origin}/share/${data.shareId}`
