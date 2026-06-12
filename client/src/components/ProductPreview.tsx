@@ -6,58 +6,58 @@ interface Props {
   config: ProductConfig
 }
 
-const SHOE_UPPER_PATH = "M38,148 Q36,118 44,92 Q56,62 90,46 Q126,30 172,28 Q214,26 244,44 Q268,58 274,90 Q280,112 276,148Z"
+const UPPER_CLIP_PATH = "M48,168 Q44,138 52,108 Q64,72 100,52 Q138,32 185,28 Q228,24 260,42 Q288,58 298,90 Q308,118 305,168Z"
 
 function MaterialOverlay({ materialId }: { materialId: string }) {
   switch (materialId) {
     case 'flyknit':
       return (
-        <g clipPath="url(#shoe-clip)" opacity="0.2">
-          {Array.from({ length: 22 }).map((_, i) => (
-            <line key={`a${i}`} x1={-10 + i * 18} y1="20" x2={-10 + i * 18 + 140} y2="165" stroke="white" strokeWidth="1" />
+        <g clipPath="url(#shoe-clip)" opacity="0.22">
+          {Array.from({ length: 24 }).map((_, i) => (
+            <line key={`a${i}`} x1={-20 + i * 16} y1="20" x2={-20 + i * 16 + 150} y2="178" stroke="white" strokeWidth="1" />
           ))}
-          {Array.from({ length: 22 }).map((_, i) => (
-            <line key={`b${i}`} x1={-10 + i * 18 + 140} y1="20" x2={-10 + i * 18} y2="165" stroke="white" strokeWidth="1" />
+          {Array.from({ length: 24 }).map((_, i) => (
+            <line key={`b${i}`} x1={-20 + i * 16 + 150} y1="20" x2={-20 + i * 16} y2="178" stroke="white" strokeWidth="1" />
           ))}
         </g>
       )
     case 'leather':
       return (
         <g clipPath="url(#shoe-clip)">
-          <ellipse cx="145" cy="72" rx="68" ry="28" fill="white" opacity="0.18" transform="rotate(-12 145 72)" />
-          <ellipse cx="108" cy="60" rx="28" ry="11" fill="white" opacity="0.14" transform="rotate(-8 108 60)" />
-          <ellipse cx="200" cy="85" rx="18" ry="8" fill="white" opacity="0.1" transform="rotate(-5 200 85)" />
+          <ellipse cx="155" cy="85" rx="75" ry="32" fill="white" opacity="0.2" transform="rotate(-10 155 85)" />
+          <ellipse cx="115" cy="70" rx="32" ry="13" fill="white" opacity="0.16" transform="rotate(-6 115 70)" />
+          <ellipse cx="215" cy="100" rx="22" ry="9" fill="white" opacity="0.12" />
         </g>
       )
     case 'mesh':
       return (
-        <g clipPath="url(#shoe-clip)" opacity="0.22">
-          {Array.from({ length: 14 }).map((_, row) =>
-            Array.from({ length: 26 }).map((_, col) => (
-              <circle key={`${row}-${col}`} cx={28 + col * 11} cy={30 + row * 11} r="1.8" fill="white" />
+        <g clipPath="url(#shoe-clip)" opacity="0.24">
+          {Array.from({ length: 16 }).map((_, row) =>
+            Array.from({ length: 28 }).map((_, col) => (
+              <circle key={`${row}-${col}`} cx={30 + col * 11} cy={28 + row * 11} r="2" fill="white" />
             ))
           )}
         </g>
       )
     case 'canvas':
       return (
-        <g clipPath="url(#shoe-clip)" opacity="0.15">
-          {Array.from({ length: 16 }).map((_, i) => (
-            <line key={`h${i}`} x1="20" y1={28 + i * 9} x2="290" y2={28 + i * 9} stroke="white" strokeWidth="1.8" />
+        <g clipPath="url(#shoe-clip)" opacity="0.16">
+          {Array.from({ length: 18 }).map((_, i) => (
+            <line key={`h${i}`} x1="20" y1={26 + i * 9} x2="320" y2={26 + i * 9} stroke="white" strokeWidth="2" />
           ))}
-          {Array.from({ length: 30 }).map((_, i) => (
-            <line key={`v${i}`} x1={20 + i * 9} y1="20" x2={20 + i * 9} y2="160" stroke="white" strokeWidth="0.8" />
+          {Array.from({ length: 32 }).map((_, i) => (
+            <line key={`v${i}`} x1={20 + i * 9} y1="20" x2={20 + i * 9} y2="178" stroke="white" strokeWidth="0.8" />
           ))}
         </g>
       )
     case 'recycled':
       return (
         <g clipPath="url(#shoe-clip)" opacity="0.18">
-          {Array.from({ length: 13 }).map((_, i) => (
+          {Array.from({ length: 14 }).map((_, i) => (
             <path
               key={`w${i}`}
-              d={`M20,${30 + i * 11} Q90,${22 + i * 11} 160,${30 + i * 11} Q230,${38 + i * 11} 290,${30 + i * 11}`}
-              fill="none" stroke="white" strokeWidth="1.8"
+              d={`M20,${28 + i * 11} Q100,${20 + i * 11} 180,${28 + i * 11} Q260,${36 + i * 11} 320,${28 + i * 11}`}
+              fill="none" stroke="white" strokeWidth="2"
             />
           ))}
         </g>
@@ -69,71 +69,89 @@ function MaterialOverlay({ materialId }: { materialId: string }) {
 
 const SHOE_SVG = (colorHex: string, materialId: string) => {
   const isLight = colorHex === '#F5F5F5'
-  const strokeColor = isLight ? '#c0c0c0' : 'none'
+  const stroke = isLight ? '#aaa' : 'none'
+  const bg = isLight ? '#e2e8f0' : colorHex
 
   return (
-    <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+    <svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
       <defs>
         <clipPath id="shoe-clip">
-          <path d={SHOE_UPPER_PATH} />
+          <path d={UPPER_CLIP_PATH} />
         </clipPath>
       </defs>
 
-      {/* Drop shadow */}
-      <ellipse cx="160" cy="188" rx="128" ry="9" fill="currentColor" opacity="0.12" />
+      {/* Ground shadow */}
+      <ellipse cx="182" cy="228" rx="145" ry="10" fill="currentColor" opacity="0.1" />
 
-      {/* Sole */}
-      <path
-        d="M34,155 Q30,172 52,176 L268,176 Q295,174 296,163 Q296,152 270,149 L38,149 Q32,151 34,155Z"
-        fill="currentColor" opacity="0.55"
-        stroke={strokeColor} strokeWidth="1"
-      />
-      {/* Midsole line */}
-      <line x1="38" y1="151" x2="270" y2="151" stroke="white" strokeWidth="1.2" opacity="0.3" />
+      {/* === SOLE STACK (chunky 3-layer) === */}
+      {/* Outer rubber sole - bottom */}
+      <path d="M44,210 Q40,224 62,230 L285,230 Q318,228 320,216 Q320,204 295,200 L55,200 Q40,202 44,210Z"
+        fill="currentColor" opacity="0.95" stroke={stroke} strokeWidth="0.8" />
+      {/* Midsole layer 2 */}
+      <path d="M50,200 Q48,212 62,214 L290,214 Q315,212 316,204 L50,200Z"
+        fill="white" opacity="0.22" />
+      {/* Midsole layer 1 */}
+      <path d="M52,190 L302,190 Q318,190 320,200 L50,200 Q49,192 52,190Z"
+        fill="currentColor" opacity="0.65" stroke={stroke} strokeWidth="0.6" />
+      {/* Midsole layer top */}
+      <path d="M54,180 L300,180 Q316,180 318,190 L52,190 Q50,182 54,180Z"
+        fill="currentColor" opacity="0.5" stroke={stroke} strokeWidth="0.6" />
+      {/* Midsole highlight stripe */}
+      <path d="M55,182 L300,182 Q314,182 316,186 Q295,183 55,183Z"
+        fill="white" opacity="0.25" />
 
-      {/* Main upper */}
-      <path
-        d={SHOE_UPPER_PATH}
-        fill="currentColor"
-        stroke={strokeColor} strokeWidth="1.2"
-      />
+      {/* === MAIN UPPER === */}
+      <path d={UPPER_CLIP_PATH}
+        fill="currentColor" stroke={stroke} strokeWidth="1.2" />
 
       {/* Heel counter */}
-      <path
-        d="M244,44 Q270,36 280,60 Q288,82 280,112 Q276,130 274,90 Q268,58 244,44Z"
-        fill="currentColor" opacity="0.72"
-      />
+      <path d="M260,42 Q292,32 306,62 Q316,88 310,130 Q305,155 305,168 L298,90 Q288,58 260,42Z"
+        fill="currentColor" opacity="0.7" />
 
       {/* Toe cap */}
-      <path
-        d="M38,148 Q36,118 44,95 Q56,72 80,58 Q63,82 58,118 L50,148Z"
-        fill="currentColor" opacity="0.78"
-      />
+      <path d="M48,168 Q44,140 52,112 Q64,80 92,60 Q72,86 66,126 L56,168Z"
+        fill="currentColor" opacity="0.75" />
 
-      {/* Ankle collar opening */}
-      <ellipse cx="262" cy="108" rx="19" ry="26" fill="#dde3ea" />
-      <ellipse cx="262" cy="108" rx="14" ry="20" fill="#e8edf3" />
+      {/* Ankle collar padding */}
+      <ellipse cx="294" cy="118" rx="22" ry="32" fill={isLight ? '#c8d0da' : '#c8d0da'} />
+      <ellipse cx="294" cy="118" rx="15" ry="23" fill={isLight ? '#d8e0ea' : '#d8e0ea'} />
+
+      {/* Aglet holes */}
+      <circle cx="286" cy="100" r="4.5" fill="#c0c8d4" />
+      <circle cx="300" cy="98" r="4.5" fill="#c0c8d4" />
 
       {/* Tongue */}
-      <path
-        d="M152,28 Q174,26 192,32 L186,95 Q175,100 162,100 Q149,100 144,95Z"
-        fill="white" opacity="0.18"
-      />
+      <path d="M168,28 Q194,24 214,32 L208,112 Q196,118 178,118 Q160,118 154,112Z"
+        fill="white" opacity="0.17" />
 
-      {/* Material texture overlay */}
+      {/* Material texture */}
       <MaterialOverlay materialId={materialId} />
 
-      {/* Laces */}
-      <line x1="152" y1="43" x2="187" y2="40" stroke="white" strokeWidth="2.5" opacity="0.8" strokeLinecap="round" />
-      <line x1="149" y1="56" x2="185" y2="53" stroke="white" strokeWidth="2.5" opacity="0.8" strokeLinecap="round" />
-      <line x1="147" y1="69" x2="183" y2="66" stroke="white" strokeWidth="2.5" opacity="0.8" strokeLinecap="round" />
-      <line x1="145" y1="82" x2="181" y2="79" stroke="white" strokeWidth="2.5" opacity="0.8" strokeLinecap="round" />
+      {/* === LACES (5 rows with eyelets) === */}
+      {[0,1,2,3,4].map(i => (
+        <g key={i}>
+          <line x1={164 - i*3} y1={44 + i*14} x2={210 - i*2} y2={40 + i*14}
+            stroke="white" strokeWidth="2.8" opacity="0.88" strokeLinecap="round" />
+          <circle cx={160 - i*3} cy={44 + i*14} r="3.2" fill="white" opacity="0.55" />
+          <circle cx={213 - i*2} cy={40 + i*14} r="3.2" fill="white" opacity="0.55" />
+        </g>
+      ))}
 
-      {/* Side stripe */}
-      <path
-        d="M85,118 Q160,93 255,104 Q235,116 158,120 Q112,122 85,118Z"
-        fill="white" opacity="0.2"
-      />
+      {/* === SIDE PANEL DETAIL === */}
+      {/* Lower panel overlay (like Air Force panel) */}
+      <path d="M78,142 Q80,130 100,124 L260,126 Q285,128 295,138 Q265,148 215,150 Q145,152 78,142Z"
+        fill="white" opacity="0.14" />
+      {/* Panel border line */}
+      <path d="M78,142 Q145,152 215,150 Q265,148 295,138"
+        fill="none" stroke="white" strokeWidth="1" opacity="0.25" />
+
+      {/* Swoosh-style stripe */}
+      <path d="M95,158 Q175,132 288,148 Q265,162 188,164 Q135,166 95,158Z"
+        fill="white" opacity="0.17" />
+
+      {/* Toe stitching detail */}
+      <path d="M56,150 Q60,100 90,72"
+        fill="none" stroke="white" strokeWidth="1" opacity="0.2" strokeDasharray="3,3" />
     </svg>
   )
 }
