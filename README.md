@@ -13,7 +13,21 @@
 
 **A real-time product customization tool — configure color, material, and product type with an instant live preview. Save your design and share it with anyone via a unique URL.**
 
-[🚀 Live Demo](https://pdc-client-xxxx.onrender.com) · [📦 API](https://pdc-server-s19t.onrender.com/api/health) · [🐛 Report Bug](https://github.com/2000090079/product-design-configurator/issues)
+[🚀 Live Demo](https://pdc-client.onrender.com) · [📦 API](https://pdc-server-s19t.onrender.com/api/health) · [🐛 Report Bug](https://github.com/2000090079/product-design-configurator/issues)
+
+</div>
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
+
+**Configurator — Color & Material Selection**
+![Configurator View](docs/screenshot-1.jpg)
+
+**Live Preview — Real-time SVG updates**
+![Live Preview](docs/screenshot-2.jpg)
 
 </div>
 
