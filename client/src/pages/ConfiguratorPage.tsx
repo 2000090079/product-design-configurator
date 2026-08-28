@@ -41,6 +41,31 @@ const VIEW_OPTIONS: { value: ShoeView; label: string }[] = [
   { value: 'right', label: 'Right Side' },
 ]
 
+const btnStyle = (active?: boolean, accent?: boolean): React.CSSProperties => ({
+  flex: 1,
+  minWidth: 110,
+  padding: '10px 14px',
+  borderRadius: 10,
+  border: accent
+    ? 'none'
+    : `1px solid ${active ? 'rgba(16,185,129,0.4)' : 'rgba(255,255,255,0.1)'}`,
+  background: accent
+    ? 'linear-gradient(135deg,#e94560,#8b2cf5)'
+    : active
+      ? 'rgba(16,185,129,0.14)'
+      : 'rgba(255,255,255,0.05)',
+  color: active ? '#10b981' : accent ? '#fff' : '#9ca3af',
+  fontWeight: 700,
+  fontSize: 13,
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 7,
+  fontFamily: 'inherit',
+  transition: 'opacity 0.15s',
+})
+
 const S: Record<string, React.CSSProperties> = {
   page: {
     minHeight: '100vh',
@@ -115,30 +140,6 @@ const S: Record<string, React.CSSProperties> = {
     flexWrap: 'wrap' as const,
     marginBottom: 8,
   },
-  btn: (active?: boolean, accent?: boolean): React.CSSProperties => ({
-    flex: 1,
-    minWidth: 110,
-    padding: '10px 14px',
-    borderRadius: 10,
-    border: accent
-      ? 'none'
-      : `1px solid ${active ? 'rgba(16,185,129,0.4)' : 'rgba(255,255,255,0.1)'}`,
-    background: accent
-      ? 'linear-gradient(135deg,#e94560,#8b2cf5)'
-      : active
-        ? 'rgba(16,185,129,0.14)'
-        : 'rgba(255,255,255,0.05)',
-    color: active ? '#10b981' : accent ? '#fff' : '#9ca3af',
-    fontWeight: 700,
-    fontSize: 13,
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 7,
-    fontFamily: 'inherit',
-    transition: 'opacity 0.15s',
-  }),
 }
 
 export function ConfiguratorPage() {
@@ -236,15 +237,15 @@ export function ConfiguratorPage() {
 
         {/* ── ACTIONS ── */}
         <div style={S.actionsRow}>
-          <button onClick={handleShare} style={S.btn(copied, false)}>
+          <button onClick={handleShare} style={btnStyle(copied, false)}>
             {copied ? <IconCheck /> : <IconShare />}
             {copied ? 'Copied!' : 'Share'}
           </button>
-          <button onClick={resetColors} style={S.btn(false, false)}>
+          <button onClick={resetColors} style={btnStyle(false, false)}>
             <IconReset /> Reset
           </button>
           <button onClick={saveConfig} disabled={isSaving}
-            style={{ ...S.btn(false, true), opacity: isSaving ? 0.6 : 1, cursor: isSaving ? 'not-allowed' : 'pointer' }}>
+            style={{ ...btnStyle(false, true), opacity: isSaving ? 0.6 : 1, cursor: isSaving ? 'not-allowed' : 'pointer' }}>
             <IconSave /> {isSaving ? 'Saving…' : 'Save'}
           </button>
         </div>
