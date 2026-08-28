@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { SavedConfig } from '../types'
 import { ProductPreview } from '../components/ProductPreview'
-import { COLOR_OPTIONS, MATERIAL_OPTIONS, PRODUCT_TYPES } from '../data/options'
 import { api } from '../lib/api'
 
 export function SharedConfigPage() {
@@ -25,64 +24,97 @@ export function SharedConfigPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-400 text-sm">Loading configuration…</p>
+      <div style={{ minHeight: '100vh', backgroundColor: '#0a0f1e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '32px', marginBottom: '12px' }}>👟</div>
+          <p style={{ color: '#6b7280', fontSize: '14px', fontFamily: "'Inter', system-ui" }}>Loading design…</p>
+        </div>
       </div>
     )
   }
 
   if (notFound || !config) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <p className="text-gray-700 font-medium">Configuration not found.</p>
-        <Link to="/" className="text-sm text-blue-600 hover:underline">Back to configurator</Link>
+      <div style={{ minHeight: '100vh', backgroundColor: '#0a0f1e', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', fontFamily: "'Inter', system-ui" }}>
+        <p style={{ color: '#9ca3af', fontSize: '16px', fontWeight: 500 }}>Design not found.</p>
+        <Link to="/" style={{ color: '#e94560', fontSize: '14px', textDecoration: 'none', fontWeight: 600 }}>
+          ← Create your own
+        </Link>
       </div>
     )
   }
 
-  const color = COLOR_OPTIONS.find(c => c.id === config.colorId)
-  const material = MATERIAL_OPTIONS.find(m => m.id === config.materialId)
-  const productLabel = PRODUCT_TYPES.find(p => p.value === config.productType)?.label
-
   return (
-    <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-6 py-12">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="bg-black px-6 py-4">
-          <h1 className="text-white font-bold text-lg">{config.name}</h1>
-          <p className="text-gray-400 text-xs mt-0.5">Shared Design</p>
+    <div style={{ minHeight: '100vh', backgroundColor: '#0a0f1e', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px', fontFamily: "'Inter', system-ui" }}>
+      <div style={{ width: '100%', maxWidth: '520px', backgroundColor: '#111827', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.07)', overflow: 'hidden' }}>
+
+        {/* Header */}
+        <div style={{ background: 'linear-gradient(135deg, #e94560, #8b2cf5)', padding: '20px 24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ fontSize: '24px' }}>👟</div>
+          <div>
+            <h1 style={{ color: '#fff', fontWeight: 800, fontSize: '18px', margin: 0, letterSpacing: '-0.02em' }}>
+              {config.name}
+            </h1>
+            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px', margin: '2px 0 0', fontWeight: 500 }}>
+              Shared Design · Sole Studio
+            </p>
+          </div>
         </div>
 
-        <div className="p-6">
-          <div className="h-64 mb-6">
-            <ProductPreview config={config} />
+        {/* Shoe preview */}
+        <div style={{ padding: '32px 24px 20px', backgroundColor: 'rgba(0,0,0,0.2)' }}>
+          <div style={{ height: '260px' }}>
+            <ProductPreview config={config} shoeView="left" />
           </div>
+        </div>
 
-          <dl className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-gray-500">Category</dt>
-              <dd className="font-medium text-gray-900">{productLabel}</dd>
+        {/* Details */}
+        <div style={{ padding: '20px 24px 24px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+            {config.shoeColors && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ color: '#6b7280', fontSize: '13px' }}>Colors</span>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  {Object.values(config.shoeColors).map((hex, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        width: '18px', height: '18px',
+                        borderRadius: '50%',
+                        backgroundColor: hex,
+                        border: '1.5px solid rgba(255,255,255,0.1)',
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ color: '#6b7280', fontSize: '13px' }}>Type</span>
+              <span style={{ color: '#fff', fontSize: '13px', fontWeight: 600 }}>Custom Sneaker</span>
             </div>
-            <div className="flex justify-between">
-              <dt className="text-gray-500">Color</dt>
-              <dd className="flex items-center gap-2 font-medium text-gray-900">
-                <span className="w-4 h-4 rounded-full inline-block border border-gray-200" style={{ backgroundColor: color?.hex }} />
-                {color?.name}
-              </dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-gray-500">Material</dt>
-              <dd className="font-medium text-gray-900">{material?.name}</dd>
-            </div>
-          </dl>
+          </div>
 
           <Link
             to="/"
-            className="mt-6 block w-full text-center py-3 bg-black text-white text-sm font-semibold rounded-xl hover:bg-gray-900 transition-colors"
+            style={{
+              display: 'block',
+              width: '100%',
+              textAlign: 'center',
+              padding: '12px',
+              background: 'linear-gradient(135deg, #e94560, #8b2cf5)',
+              color: '#fff',
+              fontWeight: 700,
+              fontSize: '14px',
+              borderRadius: '10px',
+              textDecoration: 'none',
+              transition: 'opacity 0.2s',
+            }}
           >
-            Create Your Own
+            Create Your Own Design
           </Link>
         </div>
       </div>
-    </main>
+    </div>
   )
 }
