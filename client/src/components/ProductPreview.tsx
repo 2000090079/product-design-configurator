@@ -2,348 +2,280 @@ import React from 'react'
 import { ShoeColors, ShoeView, ProductConfig } from '../types'
 import { DEFAULT_SHOE_COLORS } from '../hooks/useConfigurator'
 
-/* ─────────────────────────────────────────────────────────────────
-   LEFT-SIDE VIEW  (toe → left, heel → right)
-   viewBox: 0 0 560 270
-   Named SVG regions: sole | upper | toe_cap | heel | tongue | accent | laces
-   ───────────────────────────────────────────────────────────────── */
+/*
+  SIDE VIEW — Nike Air Force 1-style low-top sneaker
+  viewBox 0 0 500 280  (2.99 : 1 width-to-height — matches real shoe ratio)
+
+  Ground:          y = 275
+  Sole bottom:     y = 272
+  Midsole top:     y = 240   (where upper fabric attaches to rubber)
+  Throat peak:     x = 210, y = 88   (highest point of the shoe)
+  Toe tip front:   x = 32
+  Heel back:       x = 488
+
+  The front face of the toe box (x 32→42, y 242→172) rises 70 px over
+  10 px — an 87° near-vertical wall — the single feature that makes
+  a shoe look like a shoe rather than a wedge.
+*/
+
 function ShoeSideView({ colors }: { colors: ShoeColors }) {
-  // 5 lace rows with slight inward taper toward bottom
   const laceRows = [
-    { y: 68, x1: 172, x2: 226 },
-    { y: 82, x1: 172, x2: 225 },
-    { y: 96, x1: 173, x2: 224 },
-    { y: 110, x1: 174, x2: 223 },
-    { y: 124, x1: 175, x2: 222 },
+    { y: 106, x1: 178, x2: 244 },
+    { y: 120, x1: 178, x2: 243 },
+    { y: 134, x1: 179, x2: 242 },
+    { y: 148, x1: 180, x2: 241 },
+    { y: 162, x1: 181, x2: 240 },
   ]
 
   return (
     <svg
-      viewBox="0 0 560 270"
+      viewBox="0 0 500 280"
       xmlns="http://www.w3.org/2000/svg"
-      style={{ width: '100%', height: '100%', overflow: 'visible' }}
-      aria-label="Shoe side view"
+      style={{ width: '100%', height: 'auto', display: 'block' }}
+      aria-label="Shoe left-side view"
     >
       <defs>
-        <filter id="sh-drop" x="-15%" y="-15%" width="145%" height="160%">
-          <feDropShadow dx="0" dy="6" stdDeviation="14" floodColor="#000" floodOpacity="0.45" />
+        <filter id="shoe-drop" x="-15%" y="-20%" width="145%" height="160%">
+          <feDropShadow dx="0" dy="10" stdDeviation="16"
+            floodColor="#000" floodOpacity="0.5" />
         </filter>
-        <filter id="sh-inner" x="0%" y="0%" width="100%" height="100%">
-          <feOffset dx="0" dy="2" />
-          <feComposite in2="SourceGraphic" operator="atop" />
-        </filter>
-        {/* Clip path for upper region texture */}
-        <clipPath id="upper-clip">
-          <path d="M 40,206 Q 20,184 22,150 Q 28,110 60,88 Q 94,68 172,52 Q 200,42 228,52 Q 288,66 354,84 Q 418,102 454,122 Q 484,142 500,172 Q 508,190 504,206 L 40,206 Z" />
+        <clipPath id="cap-clip">
+          {/* clip for toe-cap so it never bleeds outside the upper */}
+          <path d="M 32,242 C 30,222 32,196 42,172 C 50,148 66,132 88,122 L 88,242 Z" />
         </clipPath>
       </defs>
 
-      {/* Ground shadow */}
-      <ellipse cx="272" cy="264" rx="228" ry="9" fill="#000" opacity="0.28" />
+      {/* ── ground shadow ── */}
+      <ellipse cx="258" cy="276" rx="212" ry="7" fill="#000" opacity="0.22" />
 
-      {/* ══════════════ SOLE ══════════════ */}
-      {/* Sole region — dark rubber outsole + midsole stack */}
+      {/* ═══════════════════════════════════════
+          SOLE  —  thick rubber outsole
+          Top edge: flat line y=242 (toe) → y=240 (heel)
+          Bottom: rounded toe corner, flat run, rounded heel corner
+          ═══════════════════════════════════════ */}
       <path
-        d="M 40,206
-           Q 18,218 18,240
-           Q 20,256 58,258
-           L 448,258
-           Q 490,258 508,246
-           Q 524,230 514,212
-           Q 508,204 500,202
-           L 52,202
-           Q 43,203 40,206 Z"
-        fill={colors.sole}
         id="region-sole"
+        d="
+          M 32,242
+          Q 14,244 10,260 Q 8,274 50,276
+          L 444,276
+          Q 480,276 490,266 Q 500,252 490,240
+          L 32,242 Z
+        "
+        fill={colors.sole}
       />
-      {/* Midsole highlight stripe */}
-      <path
-        d="M 40,206 L 500,202 L 506,206 L 46,210 Z"
-        fill="rgba(255,255,255,0.07)"
-      />
-      {/* Sole tread grooves */}
-      {[62, 122, 186, 252, 320, 388].map((x, i) => (
-        <line
-          key={i}
-          x1={x} y1={238} x2={x + 38} y2={238}
-          stroke="rgba(0,0,0,0.22)" strokeWidth="1.8" strokeLinecap="round"
-        />
+      {/* tread grooves */}
+      {[58,118,182,246,310,374].map((x, i) => (
+        <line key={i} x1={x} y1={260} x2={x+34} y2={260}
+          stroke="rgba(0,0,0,0.25)" strokeWidth="2" strokeLinecap="round" />
       ))}
+      {/* midsole pinstripe */}
+      <line x1="32" y1="242" x2="490" y2="240"
+        stroke="rgba(255,255,255,0.15)" strokeWidth="2" />
 
-      {/* ══════════════ UPPER ══════════════ */}
-      {/* Main shoe body — sits on top of sole */}
+      {/* ═══════════════════════════════════════
+          UPPER  —  main shoe body
+
+          Key segments:
+            Line A  M 32,242 → C ... 42,172
+                    The near-vertical front face.  dx=10  dy=70  → 87°
+            Line B  C ... 88,120
+                    Curves into the toe box top
+            Line C  C ... 210,88
+                    Long sweeping vamp to throat (peak)
+            Lines D–G  descent from throat to heel
+          ═══════════════════════════════════════ */}
       <path
-        d="M 40,206
-           Q 20,184 22,150
-           Q 28,110 60,88
-           Q 94,68 172,52
-           Q 200,42 228,52
-           Q 288,66 354,84
-           Q 418,102 454,122
-           Q 484,142 500,172
-           Q 508,190 504,206
-           L 40,206 Z"
-        fill={colors.upper}
         id="region-upper"
-        filter="url(#sh-drop)"
+        d="
+          M 32,242
+          C 30,220 32,194 42,172
+          C 52,148 68,130 90,120
+          C 120,108 168,94 210,88
+          Q 252,94 308,108
+          Q 372,124 428,144
+          Q 464,158 478,184
+          Q 494,212 488,242
+          L 32,242 Z
+        "
+        fill={colors.upper}
+        filter="url(#shoe-drop)"
       />
-      {/* Upper inner base shadow along midsole edge */}
+      {/* specular sheen — top-left area */}
       <path
-        d="M 40,206 L 504,206 Q 492,200 454,196 L 60,198 Z"
-        fill="rgba(0,0,0,0.1)"
+        d="M 90,120 C 120,108 168,94 210,88 Q 168,108 112,128 Z"
+        fill="rgba(255,255,255,0.08)"
       />
-      {/* Upper top-edge highlight (specular sheen) */}
+      {/* inner-shadow strip at midsole join */}
       <path
-        d="M 72,84 Q 140,64 200,52 Q 160,72 110,96 Z"
-        fill="rgba(255,255,255,0.09)"
-      />
-
-      {/* ══════════════ ANKLE COLLAR / shoe opening depth ══════════════ */}
-      {/* The dark interior visible at the ankle opening */}
-      <path
-        d="M 228,52
-           Q 294,68 360,86
-           Q 420,104 458,130
-           Q 464,140 460,150
-           Q 454,158 448,156
-           Q 432,148 408,132
-           Q 356,106 282,82
-           Q 246,70 222,58 Z"
-        fill="rgba(0,0,0,0.22)"
+        d="M 34,242 L 488,240 Q 470,236 430,234 L 54,236 Z"
+        fill="rgba(0,0,0,0.07)"
       />
 
-      {/* ══════════════ TOE_CAP ══════════════ */}
-      {/* Reinforced front tip of the shoe */}
+      {/* ═══════════════════════════════════════
+          ANKLE COLLAR INTERIOR
+          Dark fill showing inside the shoe at ankle opening
+          ═══════════════════════════════════════ */}
       <path
-        d="M 40,206
-           Q 20,186 22,154
-           Q 26,118 52,94
-           Q 66,84 88,80
-           L 88,205
-           Z"
+        d="
+          M 248,92
+          Q 340,112 428,144
+          Q 464,160 480,188
+          Q 494,218 482,232
+          Q 468,238 452,226
+          Q 416,206 370,186
+          Q 308,160 262,140
+          Q 248,132 238,120
+          L 237,196
+          Q 223,208 210,208
+          L 210,96 Z
+        "
+        fill="rgba(0,0,0,0.30)"
+      />
+
+      {/* ═══════════════════════════════════════
+          TOE CAP
+          Follows upper's steep front face, cuts at x≈100
+          ═══════════════════════════════════════ */}
+      <path
+        id="region-toe_cap"
+        d="
+          M 32,242
+          C 30,220 32,194 42,172
+          C 52,148 68,130 88,121
+          Q 95,117 102,114
+          L 102,242 Z
+        "
         fill={colors.toe_cap}
         opacity="0.95"
-        id="region-toe_cap"
       />
-      {/* Toe cap stitch detail */}
-      <path
-        d="M 42,192 Q 36,142 54,98"
-        fill="none"
-        stroke="rgba(255,255,255,0.18)"
-        strokeWidth="1.2"
-        strokeDasharray="3.5,3"
-      />
+      {/* stitch line on toe cap */}
+      <path d="M 36,228 C 34,206 36,180 44,162"
+        fill="none" stroke="rgba(255,255,255,0.22)"
+        strokeWidth="1.3" strokeDasharray="4,3.5" />
 
-      {/* ══════════════ HEEL ══════════════ */}
-      {/* Heel counter — rigid back section */}
+      {/* ═══════════════════════════════════════
+          HEEL COUNTER
+          ═══════════════════════════════════════ */}
       <path
-        d="M 454,122
-           Q 484,142 500,172
-           Q 508,190 504,206
-           L 454,206
-           Q 468,190 468,168
-           Q 464,142 454,122 Z"
-        fill={colors.heel}
         id="region-heel"
+        d="
+          M 428,144
+          Q 464,158 478,184
+          Q 494,212 488,242
+          L 446,242
+          Q 462,228 464,200
+          Q 462,170 428,144 Z
+        "
+        fill={colors.heel}
       />
-      {/* Heel counter inner shadow — depth of ankle hole */}
+      {/* ankle cutout depth */}
       <path
-        d="M 456,128
-           Q 482,146 494,174
-           Q 500,188 494,202
-           Q 484,204 476,198
-           Q 468,184 466,164
-           Q 462,142 456,128 Z"
-        fill="rgba(0,0,0,0.26)"
+        d="
+          M 430,150
+          Q 462,164 474,190
+          Q 486,216 480,236
+          Q 472,242 464,234
+          Q 456,218 456,196
+          Q 454,168 430,150 Z
+        "
+        fill="rgba(0,0,0,0.24)"
       />
-      {/* Heel tab (logo tab at back) */}
-      <rect
-        x="492" y="186" width="10" height="22" rx="2"
-        fill={colors.accent} opacity="0.9"
-      />
+      {/* heel pull tab */}
+      <rect x="479" y="210" width="9" height="26" rx="3"
+        fill={colors.accent} opacity="0.92" />
 
-      {/* ══════════════ ACCENT ══════════════ */}
-      {/* Swoosh-style stripe across shoe side */}
+      {/* ═══════════════════════════════════════
+          ACCENT  (swoosh-style side stripe)
+          ═══════════════════════════════════════ */}
       <path
-        d="M 94,186
-           Q 214,158 380,174
-           Q 348,196 258,200
-           Q 166,202 94,186 Z"
-        fill={colors.accent}
         id="region-accent"
+        d="
+          M 96,228
+          Q 222,206 400,220
+          Q 370,244 272,250
+          Q 172,254 96,228 Z
+        "
+        fill={colors.accent}
       />
 
-      {/* ══════════════ TONGUE ══════════════ */}
-      {/* Tongue flap visible at shoe opening */}
+      {/* ═══════════════════════════════════════
+          TONGUE
+          Peaks slightly above the upper (y=80 vs upper y=88)
+          to be clearly visible at the shoe opening
+          ═══════════════════════════════════════ */}
       <path
-        d="M 172,52
-           Q 200,42 228,52
-           L 224,150
-           Q 212,162 200,162
-           Q 188,162 176,150 Z"
-        fill={colors.tongue}
         id="region-tongue"
+        d="
+          M 175,96
+          Q 210,80 248,92
+          L 242,198
+          Q 228,212 210,212
+          Q 192,212 178,198 Z
+        "
+        fill={colors.tongue}
       />
-      {/* Tongue center stitch line */}
-      <line
-        x1="200" y1="54" x2="200" y2="156"
-        stroke="rgba(0,0,0,0.1)" strokeWidth="1.5" strokeDasharray="4,4"
-      />
-      {/* Tongue brand label */}
-      <rect x="188" y="130" width="24" height="12" rx="2" fill="rgba(0,0,0,0.08)" />
+      {/* tongue center seam */}
+      <line x1="210" y1="82" x2="210" y2="204"
+        stroke="rgba(0,0,0,0.12)" strokeWidth="1.5" strokeDasharray="4,4" />
+      {/* brand tag */}
+      <rect x="197" y="176" width="26" height="14" rx="3"
+        fill="rgba(0,0,0,0.09)" />
 
-      {/* ══════════════ LACES ══════════════ */}
+      {/* ═══════════════════════════════════════
+          LACES  (5 rows + eyelets)
+          ═══════════════════════════════════════ */}
       {laceRows.map(({ y, x1, x2 }, i) => (
         <g key={i}>
-          {/* Lace horizontal line */}
-          <line
-            x1={x1} y1={y} x2={x2} y2={y}
-            stroke={colors.laces} strokeWidth="2.6" strokeLinecap="round"
-          />
-          {/* Left eyelet */}
-          <circle
-            cx={x1 - 6} cy={y} r="3.2"
-            fill="none"
-            stroke={colors.laces}
-            strokeWidth="1.6"
-            opacity="0.72"
-          />
-          {/* Right eyelet */}
-          <circle
-            cx={x2 + 6} cy={y} r="3.2"
-            fill="none"
-            stroke={colors.laces}
-            strokeWidth="1.6"
-            opacity="0.72"
-          />
+          <line x1={x1} y1={y} x2={x2} y2={y}
+            stroke={colors.laces} strokeWidth="2.8" strokeLinecap="round" />
+          <circle cx={x1 - 8} cy={y} r="3.5"
+            fill="none" stroke={colors.laces} strokeWidth="1.7" opacity="0.65" />
+          <circle cx={x2 + 8} cy={y} r="3.5"
+            fill="none" stroke={colors.laces} strokeWidth="1.7" opacity="0.65" />
         </g>
       ))}
 
-      {/* ══════════════ DETAIL OVERLAYS ══════════════ */}
-      {/* Side panel seam line */}
-      <path
-        d="M 88,162 Q 200,148 358,158 Q 416,162 460,172"
-        fill="none"
-        stroke="rgba(0,0,0,0.1)"
-        strokeWidth="1"
-      />
-      {/* Midsole pinstripe (white line between sole and upper) */}
-      <line
-        x1="44" y1="203" x2="500" y2="200"
-        stroke="rgba(255,255,255,0.14)" strokeWidth="1.5"
-      />
+      {/* panel seam detail */}
+      <path d="M 102,220 Q 228,206 374,218 Q 426,224 466,236"
+        fill="none" stroke="rgba(0,0,0,0.1)" strokeWidth="1.2" />
     </svg>
   )
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   TOP-DOWN VIEW
-   viewBox: 0 0 360 170
-   Simplified bird's-eye view showing tongue, laces, sole border
-   ───────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────
+   TOP-DOWN VIEW   viewBox 0 0 400 230
+   ───────────────────────────────────────────────────────────── */
 function ShoeTopView({ colors }: { colors: ShoeColors }) {
-  const laceRows = [66, 78, 90, 102, 114]
-
+  const laceRows = [66, 80, 94, 108, 122]
   return (
-    <svg
-      viewBox="0 0 360 170"
-      xmlns="http://www.w3.org/2000/svg"
-      style={{ width: '100%', height: '100%', overflow: 'visible' }}
-      aria-label="Shoe top view"
-    >
-      {/* Ground shadow */}
-      <ellipse cx="180" cy="165" rx="148" ry="7" fill="#000" opacity="0.22" />
-
-      {/* Outer sole border */}
-      <path
-        d="M 52,85
-           Q 48,28 100,12
-           Q 148,2 196,2
-           Q 244,2 294,16
-           Q 322,30 324,85
-           Q 322,140 294,154
-           Q 244,168 196,168
-           Q 148,168 100,158
-           Q 48,142 52,85 Z"
-        fill={colors.sole}
-      />
-
-      {/* Main upper visible from above */}
-      <path
-        d="M 86,85
-           Q 84,50 126,38
-           Q 158,30 196,30
-           Q 234,30 266,38
-           Q 286,50 288,85
-           Q 286,120 266,132
-           Q 234,140 196,140
-           Q 158,140 126,132
-           Q 84,120 86,85 Z"
-        fill={colors.upper}
-      />
-
-      {/* Heel area visible from top */}
-      <path
-        d="M 266,40 Q 288,52 288,85 Q 288,118 266,130 Q 276,110 276,85 Q 276,60 266,40 Z"
-        fill={colors.heel}
-        opacity="0.85"
-      />
-
-      {/* Toe cap visible from top */}
-      <path
-        d="M 86,85 Q 84,52 122,40 Q 106,56 98,85 Q 98,114 106,130 Q 84,118 86,85 Z"
-        fill={colors.toe_cap}
-        opacity="0.85"
-      />
-
-      {/* Tongue visible from top (center) */}
-      <path
-        d="M 156,44
-           Q 196,36 236,44
-           L 230,110
-           Q 218,118 196,118
-           Q 174,118 162,110 Z"
-        fill={colors.tongue}
-      />
-      {/* Tongue stitch */}
-      <line
-        x1="196" y1="44" x2="196" y2="112"
-        stroke="rgba(0,0,0,0.1)" strokeWidth="1.4" strokeDasharray="3.5,3"
-      />
-
-      {/* Laces (horizontal, top view) */}
+    <svg viewBox="0 0 400 230" xmlns="http://www.w3.org/2000/svg"
+      style={{ width: '100%', height: 'auto', display: 'block' }}
+      aria-label="Shoe top view">
+      <ellipse cx="200" cy="224" rx="160" ry="7" fill="#000" opacity="0.2" />
+      <path d="M 56,115 Q 52,32 106,12 Q 152,0 200,0 Q 248,0 294,12 Q 348,32 344,115 Q 348,198 294,210 Q 248,220 200,220 Q 152,220 106,210 Q 52,198 56,115 Z"
+        fill={colors.sole} />
+      <path d="M 88,115 Q 86,50 132,36 Q 164,24 200,24 Q 236,24 268,36 Q 294,50 292,115 Q 294,180 268,194 Q 236,204 200,204 Q 164,204 132,194 Q 86,180 88,115 Z"
+        fill={colors.upper} />
+      <path d="M 268,38 Q 294,52 292,115 Q 294,178 268,192 Q 280,160 280,115 Q 280,70 268,38 Z" fill={colors.heel} opacity="0.88" />
+      <path d="M 88,115 Q 86,52 130,38 Q 114,68 108,115 Q 108,162 114,192 Q 86,178 88,115 Z" fill={colors.toe_cap} opacity="0.88" />
+      <path d="M 160,38 Q 200,28 240,38 L 234,128 Q 220,138 200,138 Q 180,138 166,128 Z" fill={colors.tongue} />
+      <line x1="200" y1="30" x2="200" y2="130" stroke="rgba(0,0,0,0.1)" strokeWidth="1.5" strokeDasharray="4,3.5" />
       {laceRows.map((y, i) => (
         <g key={i}>
-          <line
-            x1={158} y1={y} x2={234} y2={y}
-            stroke={colors.laces} strokeWidth="2.4" strokeLinecap="round"
-          />
-          <circle cx={152} cy={y} r="2.8" fill="none" stroke={colors.laces} strokeWidth="1.4" opacity="0.7" />
-          <circle cx={240} cy={y} r="2.8" fill="none" stroke={colors.laces} strokeWidth="1.4" opacity="0.7" />
+          <line x1={162} y1={y} x2={238} y2={y} stroke={colors.laces} strokeWidth="2.4" strokeLinecap="round" />
+          <circle cx={155} cy={y} r="3" fill="none" stroke={colors.laces} strokeWidth="1.4" opacity="0.65" />
+          <circle cx={245} cy={y} r="3" fill="none" stroke={colors.laces} strokeWidth="1.4" opacity="0.65" />
         </g>
       ))}
-
-      {/* Accent stripe visible from top */}
-      <path
-        d="M 100,114 Q 180,108 272,116 Q 250,132 196,134 Q 148,134 100,114 Z"
-        fill={colors.accent}
-        opacity="0.9"
-      />
-
-      {/* Inner-sole highlight */}
-      <path
-        d="M 86,85 Q 84,50 126,38 Q 158,30 196,30"
-        fill="none"
-        stroke="rgba(255,255,255,0.12)"
-        strokeWidth="2"
-      />
+      <path d="M 108,174 Q 192,165 280,174 Q 260,190 200,194 Q 142,194 108,174 Z" fill={colors.accent} opacity="0.88" />
     </svg>
   )
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   PUBLIC COMPONENT
-   ───────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────
+   PUBLIC EXPORT
+   ───────────────────────────────────────────────────────────── */
 interface Props {
   config?: ProductConfig
   shoeColors?: ShoeColors
@@ -351,27 +283,14 @@ interface Props {
 }
 
 export function ProductPreview({ config, shoeColors, shoeView = 'left' }: Props) {
-  // Resolve shoe colors: explicit prop wins, then config.shoeColors, then defaults
   const colors: ShoeColors = shoeColors ?? config?.shoeColors ?? DEFAULT_SHOE_COLORS
-
-  let shoeNode: React.ReactNode
-  if (shoeView === 'top') {
-    shoeNode = <ShoeTopView colors={colors} />
-  } else if (shoeView === 'right') {
-    shoeNode = (
-      <div style={{ transform: 'scaleX(-1)', width: '100%', height: '100%' }}>
+  if (shoeView === 'top') return <ShoeTopView colors={colors} />
+  if (shoeView === 'right') {
+    return (
+      <div style={{ transform: 'scaleX(-1)', width: '100%' }}>
         <ShoeSideView colors={colors} />
       </div>
     )
-  } else {
-    shoeNode = <ShoeSideView colors={colors} />
   }
-
-  return (
-    <div className="w-full h-full flex items-center justify-center">
-      <div style={{ width: '100%', maxWidth: '560px' }}>
-        {shoeNode}
-      </div>
-    </div>
-  )
+  return <ShoeSideView colors={colors} />
 }
