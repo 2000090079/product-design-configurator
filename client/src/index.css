@@ -369,6 +369,8 @@ input::placeholder { color: var(--muted); }
 
 @media (max-width: 560px) {
   .name-input { display: none; }
+  .product-btn { letter-spacing: 0.1em; font-size: 9px; padding: 14px 2px 12px; }
+  .product-btn svg { width: 28px; height: 28px; }
   .brand-name { font-size: 17px; letter-spacing: 0.2em; }
   .actions { grid-template-columns: 1fr 1fr; }
   .actions .btn-gold { grid-column: 1 / -1; }
