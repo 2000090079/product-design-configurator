@@ -1,33 +1,31 @@
 import React from 'react'
-import { MATERIAL_OPTIONS } from '../data/options'
+import { ProductType } from '../types'
+import { PRODUCTS } from '../data/options'
 
 interface Props {
+  productType?: ProductType
   selectedId: string
   onChange: (id: string) => void
 }
 
-export function MaterialSelector({ selectedId, onChange }: Props) {
+export function MaterialSelector({ productType = 'shoe', selectedId, onChange }: Props) {
   return (
-    <div>
-      <p className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Material</p>
-      <div className="space-y-2" role="listbox" aria-label="Select material">
-        {MATERIAL_OPTIONS.map((mat) => (
-          <button
-            key={mat.id}
-            role="option"
-            aria-selected={selectedId === mat.id}
-            onClick={() => onChange(mat.id)}
-            className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all duration-150
-              ${selectedId === mat.id
-                ? 'border-black bg-gray-50'
-                : 'border-gray-200 bg-white hover:border-gray-300'
-              }`}
-          >
-            <span className="block text-sm font-semibold text-gray-900">{mat.name}</span>
-            <span className="block text-xs text-gray-500 mt-0.5">{mat.description}</span>
-          </button>
-        ))}
-      </div>
+    <div className="material-list" role="listbox" aria-label="Select material">
+      {PRODUCTS[productType].materials.map(mat => (
+        <button
+          key={mat.id}
+          role="option"
+          aria-selected={selectedId === mat.id}
+          onClick={() => onChange(mat.id)}
+          className="material-opt"
+        >
+          <span className="mark" aria-hidden="true" />
+          <span>
+            <span className="m-name block">{mat.name}</span>
+            <span className="m-desc block">{mat.description}</span>
+          </span>
+        </button>
+      ))}
     </div>
   )
 }

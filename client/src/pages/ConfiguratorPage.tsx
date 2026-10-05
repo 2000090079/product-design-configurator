@@ -1,284 +1,180 @@
 import React, { useState } from 'react'
 import { useConfigurator } from '../hooks/useConfigurator'
+import { useTheme } from '../hooks/useTheme'
 import { ColorPicker } from '../components/ColorPicker'
 import { ProductPreview } from '../components/ProductPreview'
-import { ShoeView } from '../types'
+import { ProductTypeSelector } from '../components/ProductTypeSelector'
+import { MaterialSelector } from '../components/MaterialSelector'
+import { PRODUCTS } from '../data/options'
+import { ProductType } from '../types'
 
-function IconShare() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-    </svg>
-  )
-}
-function IconReset() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/>
-    </svg>
-  )
-}
-function IconSave() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-      <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
-    </svg>
-  )
-}
-function IconCheck() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="20 6 9 17 4 12"/>
-    </svg>
-  )
+const icon = (children: React.ReactNode) => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {children}
+  </svg>
+)
+const IconShare = () => icon(<><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></>)
+const IconReset = () => icon(<><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 .49-3.51" /></>)
+const IconCheck = () => icon(<polyline points="20 6 9 17 4 12" />)
+const IconSun = () => icon(<><circle cx="12" cy="12" r="4.2" /><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.5 1.5M17.2 17.2l1.5 1.5M5.3 18.7l1.5-1.5M17.2 6.8l1.5-1.5" /></>)
+const IconMoon = () => icon(<path d="M20.5 14.6A8.5 8.5 0 1 1 9.4 3.5a6.8 6.8 0 0 0 11.1 11.1z" />)
+
+const HEADLINE: Record<ProductType, React.ReactNode> = {
+  shoe: <>Design your <em className="gold-text">signature</em> sneaker</>,
+  shirt: <>A shirt cut to your <em className="gold-text">taste</em></>,
+  cap: <>The cap, <em className="gold-text">reimagined</em></>,
+  pants: <>Tailored trousers, <em className="gold-text">your way</em></>,
 }
 
-const VIEW_OPTIONS: { value: ShoeView; label: string }[] = [
-  { value: 'left',  label: 'Left Side' },
-  { value: 'top',   label: 'Top' },
-  { value: 'right', label: 'Right Side' },
-]
-
-const btnStyle = (active?: boolean, accent?: boolean): React.CSSProperties => ({
-  flex: 1,
-  minWidth: 110,
-  padding: '10px 14px',
-  borderRadius: 10,
-  border: accent
-    ? 'none'
-    : `1px solid ${active ? 'rgba(16,185,129,0.4)' : 'rgba(255,255,255,0.1)'}`,
-  background: accent
-    ? 'linear-gradient(135deg,#e94560,#8b2cf5)'
-    : active
-      ? 'rgba(16,185,129,0.14)'
-      : 'rgba(255,255,255,0.05)',
-  color: active ? '#10b981' : accent ? '#fff' : '#9ca3af',
-  fontWeight: 700,
-  fontSize: 13,
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 7,
-  fontFamily: 'inherit',
-  transition: 'opacity 0.15s',
-})
-
-const S: Record<string, React.CSSProperties> = {
-  page: {
-    minHeight: '100vh',
-    backgroundColor: '#0a0f1e',
-    fontFamily: "'Inter', system-ui, sans-serif",
-    color: '#fff',
-  },
-  header: {
-    borderBottom: '1px solid rgba(255,255,255,0.07)',
-    backgroundColor: 'rgba(17,24,39,0.92)',
-    backdropFilter: 'blur(12px)',
-    position: 'sticky' as const,
-    top: 0,
-    zIndex: 50,
-    padding: '0 24px',
-    height: 60,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  wrap: {
-    maxWidth: 760,
-    margin: '0 auto',
-    padding: '24px 16px 48px',
-  },
-  previewCard: {
-    backgroundColor: '#111827',
-    borderRadius: 20,
-    border: '1px solid rgba(255,255,255,0.07)',
-    padding: '28px 24px 20px',
-    marginBottom: 20,
-    position: 'relative' as const,
-    overflow: 'hidden',
-  },
-  gridBg: {
-    position: 'absolute' as const,
-    inset: 0,
-    backgroundImage:
-      'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),' +
-      'linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',
-    backgroundSize: '36px 36px',
-    pointerEvents: 'none' as const,
-  },
-  svgWrap: {
-    position: 'relative' as const,
-    width: '100%',
-    maxWidth: 560,
-    margin: '0 auto',
-  },
-  viewRow: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: 6,
-    marginTop: 18,
-    backgroundColor: 'rgba(0,0,0,0.28)',
-    borderRadius: 10,
-    padding: 4,
-    width: 'fit-content',
-    margin: '16px auto 0',
-    border: '1px solid rgba(255,255,255,0.07)',
-  },
-  pickersCard: {
-    backgroundColor: '#111827',
-    borderRadius: 20,
-    border: '1px solid rgba(255,255,255,0.07)',
-    padding: '20px 20px 16px',
-    marginBottom: 14,
-  },
-  actionsRow: {
-    display: 'flex',
-    gap: 10,
-    flexWrap: 'wrap' as const,
-    marginBottom: 8,
-  },
+/** Short, stable reference number for the current design (like a boutique order ref). */
+function designRef(seed: string): string {
+  let h = 2166136261
+  for (let i = 0; i < seed.length; i++) h = Math.imul(h ^ seed.charCodeAt(i), 16777619)
+  return String(Math.abs(h) % 10000).padStart(4, '0')
 }
 
 export function ConfiguratorPage() {
   const {
-    config, shoeColors, shoeView, isSaving, shareUrl, error,
-    updateName, updatePartColor, resetColors, generateShareUrl,
-    setShoeView, saveConfig,
+    config, productType, colors, materialId, view, isSaving, shareUrl, error,
+    updateProductType, updateMaterial, updateName, updatePartColor, resetColors,
+    generateShareUrl, setView, saveConfig,
   } = useConfigurator()
+  const { theme, setTheme } = useTheme()
+  const def = PRODUCTS[productType]
+  const material = def.materials.find(m => m.id === materialId)
+  const ref = designRef(productType + materialId + Object.values(colors).join(''))
 
   const [copied, setCopied] = useState(false)
-  const [localShareUrl, setLocalShareUrl] = useState<string | null>(null)
-
   const handleShare = () => {
     const url = generateShareUrl()
-    setLocalShareUrl(url)
-    navigator.clipboard.writeText(url).catch(() => {
-      const el = document.createElement('input')
-      el.value = url; document.body.appendChild(el)
-      el.select(); document.execCommand('copy')
-      document.body.removeChild(el)
-    })
+    navigator.clipboard?.writeText(url).catch(() => {})
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const displayShareUrl = localShareUrl ?? shareUrl
+  const stageWidth = { shoe: 640, cap: 470, shirt: 380, pants: 300 }[productType]
 
   return (
-    <div style={S.page}>
+    <div className="lux-page">
       {/* ── HEADER ── */}
-      <header style={S.header}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            width: 30, height: 30, borderRadius: 8,
-            background: 'linear-gradient(135deg,#e94560,#8b2cf5)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 14,
-          }}>👟</div>
-          <div>
-            <div style={{ fontWeight: 800, fontSize: 14, letterSpacing: '-0.01em' }}>SOLE STUDIO</div>
-            <div style={{ fontSize: 10, color: '#4b5563', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              Shoe Configurator
-            </div>
+      <header className="lux-header">
+        <div className="brand">
+          <div className="brand-mark"><span className="gold-text">D</span></div>
+          <div style={{ minWidth: 0 }}>
+            <div className="brand-name">DESIGN STUDIO</div>
           </div>
         </div>
-        <input
-          value={config.name}
-          onChange={e => updateName(e.target.value)}
-          placeholder="Design name…"
-          style={{
-            background: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 8, padding: '5px 12px',
-            color: '#fff', fontSize: 13, fontWeight: 500,
-            width: 170, outline: 'none',
-            fontFamily: 'inherit',
-          }}
-        />
+        <div className="header-right">
+          <input
+            className="name-input"
+            value={config.name}
+            onChange={e => updateName(e.target.value)}
+            placeholder="Name your design"
+            aria-label="Design name"
+          />
+          <button
+            className="theme-toggle"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+            title={theme === 'dark' ? 'Light theme' : 'Dark theme'}
+          >
+            {theme === 'dark' ? <IconSun /> : <IconMoon />}
+          </button>
+        </div>
       </header>
 
-      <div style={S.wrap}>
-        {/* ── SHOE PREVIEW (full width) ── */}
-        <div style={S.previewCard}>
-          <div style={S.gridBg} />
-          {/* ambient glow behind shoe */}
-          <div style={{
-            position: 'absolute', top: '40%', left: '50%',
-            transform: 'translate(-50%,-50%)',
-            width: '70%', height: '50%',
-            background: `radial-gradient(ellipse,${shoeColors.accent}22 0%,transparent 70%)`,
-            pointerEvents: 'none',
-          }} />
-
-          {/* THE SHOE SVG */}
-          <div style={S.svgWrap}>
-            <ProductPreview shoeColors={shoeColors} shoeView={shoeView} />
+      <main className="lux-main">
+        {/* ── PREVIEW ── */}
+        <section className="lux-sticky" aria-label="Preview">
+          <div style={{ marginBottom: 18 }}>
+            <div className="eyebrow">Made to Order</div>
+            <h1 className="hero-title">{HEADLINE[productType]}</h1>
           </div>
 
-          {/* view toggle */}
-          <div style={S.viewRow}>
-            {VIEW_OPTIONS.map(opt => (
-              <button key={opt.value} onClick={() => setShoeView(opt.value)} style={{
-                padding: '6px 14px', borderRadius: 7, border: 'none',
-                fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                fontFamily: 'inherit', letterSpacing: '0.01em',
-                transition: 'all 0.15s',
-                backgroundColor: shoeView === opt.value ? '#e94560' : 'transparent',
-                color: shoeView === opt.value ? '#fff' : '#6b7280',
-              }}>
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        </div>
+          <div className="stage-card">
+            <div className="stage">
+              <span className="stage-corner tl" /><span className="stage-corner tr" />
+              <span className="stage-corner bl" /><span className="stage-corner br" />
+              <span className="stage-label">{def.label} · Design Studio</span>
+              <span className="stage-ref">N° {ref}</span>
 
-        {/* ── ACTIONS ── */}
-        <div style={S.actionsRow}>
-          <button onClick={handleShare} style={btnStyle(copied, false)}>
-            {copied ? <IconCheck /> : <IconShare />}
-            {copied ? 'Copied!' : 'Share'}
-          </button>
-          <button onClick={resetColors} style={btnStyle(false, false)}>
-            <IconReset /> Reset
-          </button>
-          <button onClick={saveConfig} disabled={isSaving}
-            style={{ ...btnStyle(false, true), opacity: isSaving ? 0.6 : 1, cursor: isSaving ? 'not-allowed' : 'pointer' }}>
-            <IconSave /> {isSaving ? 'Saving…' : 'Save'}
-          </button>
-        </div>
+              <div style={{ position: 'relative', margin: '0 auto', maxWidth: stageWidth }}>
+                <ProductPreview productType={productType} colors={colors} materialId={materialId} view={view} />
+              </div>
 
-        {/* share URL display */}
-        {displayShareUrl && (
-          <div style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: 8, padding: '8px 12px', marginBottom: 14,
-            fontSize: 11, color: '#6b7280', wordBreak: 'break-all',
-            fontFamily: 'monospace', lineHeight: 1.5,
-          }}>
-            {displayShareUrl}
+              <div className="view-tabs">
+                {def.views.map(opt => (
+                  <button key={opt.id} onClick={() => setView(opt.id)} aria-pressed={view === opt.id}>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="stage-meta">
+              <div style={{ minWidth: 0 }}>
+                <div className="title">{config.name || 'Untitled'}</div>
+                <div className="sub">{def.noun} — {material?.name}</div>
+              </div>
+              <div className="palette-dots">
+                {def.parts.map(p => <span key={p.id} title={p.label} style={{ backgroundColor: colors[p.id] }} />)}
+              </div>
+            </div>
           </div>
-        )}
-        {error && (
-          <p style={{ color: '#ef4444', fontSize: 12, textAlign: 'center', margin: '0 0 12px' }}>
-            {error}
-          </p>
-        )}
 
-        {/* ── COLOR PICKERS ── */}
-        <div style={S.pickersCard}>
-          <div style={{ marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-            <h2 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#fff' }}>Customize Parts</h2>
-            <p style={{ margin: '3px 0 0', fontSize: 11, color: '#6b7280' }}>
-              Click any swatch to change that region's color instantly
-            </p>
+          <div className="actions">
+            <button onClick={handleShare} className={`btn btn-ghost${copied ? ' ok' : ''}`}>
+              {copied ? <IconCheck /> : <IconShare />}
+              {copied ? 'Copied' : 'Share'}
+            </button>
+            <button onClick={resetColors} className="btn btn-ghost">
+              <IconReset /> Reset
+            </button>
+            <button onClick={saveConfig} disabled={isSaving} className="btn btn-gold">
+              {isSaving ? 'Saving…' : 'Save Design'}
+            </button>
           </div>
-          <ColorPicker shoeColors={shoeColors} onChange={updatePartColor} />
-        </div>
-      </div>
+          {shareUrl && <div className="share-url">{shareUrl}</div>}
+          {error && <p className="error-text">{error}</p>}
+        </section>
+
+        {/* ── CONTROLS ── */}
+        <section aria-label="Customize" style={{ minWidth: 0 }}>
+          <div className="panel">
+            <div className="panel-head">
+              <span className="panel-num">i.</span>
+              <h2 className="panel-title">The Piece</h2>
+              <span className="panel-hint">Choose what to create</span>
+            </div>
+            <div className="rule" />
+            <ProductTypeSelector selected={productType} onChange={updateProductType} />
+          </div>
+
+          <div className="panel">
+            <div className="panel-head">
+              <span className="panel-num">ii.</span>
+              <h2 className="panel-title">Material</h2>
+              <span className="panel-hint">Finish of the main panels</span>
+            </div>
+            <div className="rule" />
+            <MaterialSelector productType={productType} selectedId={materialId} onChange={updateMaterial} />
+          </div>
+
+          <div className="panel">
+            <div className="panel-head">
+              <span className="panel-num">iii.</span>
+              <h2 className="panel-title">Colourway</h2>
+              <span className="panel-hint">Tap a swatch · or the chip for any shade</span>
+            </div>
+            <div className="rule" />
+            <ColorPicker parts={def.parts} colors={colors} onChange={updatePartColor} />
+          </div>
+        </section>
+      </main>
+
+      <footer className="lux-footer">
+        <span>Design Studio</span>
+        <span>Crafted to order</span>
+      </footer>
     </div>
   )
 }

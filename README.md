@@ -37,10 +37,10 @@
 
 | Feature | Description |
 |---|---|
-| 🖼️ **Live Preview** | SVG product shape updates instantly as you configure |
-| 🎨 **Color Picker** | 8 curated colorways with accessible ring selection |
-| 🧵 **Material Selector** | 5 materials — Flyknit, Leather, Mesh, Canvas, Recycled Poly |
-| 👟 **Product Types** | Footwear, Tops, and Bottoms |
+| 🖼️ **Live Preview** | Detailed SVG products (sneaker, button-up shirt, 6-panel cap, chinos) with multiple views |
+| 🎨 **Per-Part Colors** | Color every part (e.g. sneaker upper, mudguard, laces, midsole, gum outsole) from curated swatches or any custom color |
+| 🧵 **Material Selector** | Product-specific materials (leather, flyknit, mesh, suede, oxford, linen, denim, twill, wool, corduroy…) rendered as textures |
+| 👟 **Product Types** | Footwear, Shirts, Caps, and Bottoms |
 | 💾 **Save & Share** | Saves to MongoDB, generates a unique shareable URL |
 | ♿ **Accessible** | Full ARIA roles, keyboard nav, focus-visible rings |
 | 📱 **Responsive** | Stacked on mobile, side-by-side on desktop |

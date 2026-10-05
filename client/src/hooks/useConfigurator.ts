@@ -1,132 +1,128 @@
-import { useState, useCallback, useEffect } from 'react'
-import { ProductConfig, ProductType, ShoeColors, ShoeView, ShoePart } from '../types'
-import { COLOR_OPTIONS, MATERIAL_OPTIONS } from '../data/options'
+import { useState, useCallback } from 'react'
+import { PartColors, ProductConfig, ProductType, ViewId } from '../types'
+import { PRODUCTS, defaultColors } from '../data/options'
 import { api } from '../lib/api'
 
-export const DEFAULT_SHOE_COLORS: ShoeColors = {
-  sole:    '#1a1a1a',
-  upper:   '#ffffff',
-  toe_cap: '#cccccc',
-  heel:    '#cccccc',
-  laces:   '#ffffff',
-  tongue:  '#ffffff',
-  accent:  '#e94560',
-}
+const HEX = /^[0-9a-fA-F]{6}$/
 
-const SHOE_PARTS: ShoePart[] = ['sole', 'upper', 'toe_cap', 'heel', 'laces', 'tongue', 'accent']
+type ColorsByProduct = Record<ProductType, PartColors>
+type MaterialByProduct = Record<ProductType, string>
 
-function readColorsFromUrl(): Partial<ShoeColors> {
-  const params = new URLSearchParams(window.location.search)
-  const out: Partial<ShoeColors> = {}
-  SHOE_PARTS.forEach(part => {
-    const val = params.get(part)
-    if (val && /^[0-9a-fA-F]{6}$/.test(val)) {
-      out[part] = `#${val}`
-    }
+const ALL_TYPES = Object.keys(PRODUCTS) as ProductType[]
+
+function initialState() {
+  const colors = {} as ColorsByProduct
+  const materials = {} as MaterialByProduct
+  ALL_TYPES.forEach(t => {
+    colors[t] = defaultColors(t)
+    materials[t] = PRODUCTS[t].materials[0].id
   })
-  return out
-}
 
-const DEFAULT_CONFIG: ProductConfig = {
-  productType: 'shoe',
-  colorId: COLOR_OPTIONS[0].id,
-  materialId: MATERIAL_OPTIONS[0].id,
-  name: 'My Design',
+  // Restore a shared design from the URL: ?product=cap&material=wool&brim=1f2a44…
+  const params = new URLSearchParams(window.location.search)
+  const p = params.get('product') as ProductType | null
+  const productType: ProductType = p && PRODUCTS[p] ? p : 'shoe'
+  PRODUCTS[productType].parts.forEach(part => {
+    const val = params.get(part.id)
+    if (val && HEX.test(val)) colors[productType][part.id] = `#${val.toLowerCase()}`
+  })
+  const m = params.get('material')
+  if (m && PRODUCTS[productType].materials.some(x => x.id === m)) materials[productType] = m
+
+  return { colors, materials, productType }
 }
 
 export function useConfigurator() {
-  const [config, setConfig] = useState<ProductConfig>(DEFAULT_CONFIG)
-  const [shoeColors, setShoeColors] = useState<ShoeColors>(() => ({
-    ...DEFAULT_SHOE_COLORS,
-    ...readColorsFromUrl(),
-  }))
-  const [shoeView, setShoeView] = useState<ShoeView>('left')
+  const [init] = useState(initialState)
+  const [productType, setProductType] = useState<ProductType>(init.productType)
+  const [colorsByProduct, setColorsByProduct] = useState<ColorsByProduct>(init.colors)
+  const [materialByProduct, setMaterialByProduct] = useState<MaterialByProduct>(init.materials)
+  const [viewByProduct, setViewByProduct] = useState<Record<ProductType, ViewId>>(() => {
+    const v = {} as Record<ProductType, ViewId>
+    ALL_TYPES.forEach(t => { v[t] = PRODUCTS[t].views[0].id })
+    return v
+  })
+  const [name, setName] = useState('My Design')
   const [isSaving, setIsSaving] = useState(false)
   const [shareUrl, setShareUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  // Sync URL params → state on mount (also handles direct-link sharing)
-  useEffect(() => {
-    const urlColors = readColorsFromUrl()
-    if (Object.keys(urlColors).length > 0) {
-      setShoeColors(prev => ({ ...prev, ...urlColors }))
-    }
-  }, [])
+  const colors = colorsByProduct[productType]
+  const materialId = materialByProduct[productType]
+  const view = viewByProduct[productType]
 
-  const updateProductType = useCallback((productType: ProductType) => {
-    setConfig(prev => ({ ...prev, productType }))
+  const config: ProductConfig = { productType, materialId, name, colors }
+
+  const updateProductType = useCallback((t: ProductType) => {
+    setProductType(t)
     setShareUrl(null)
   }, [])
 
-  const updateColor = useCallback((colorId: string) => {
-    setConfig(prev => ({ ...prev, colorId }))
+  const updateMaterial = useCallback((id: string) => {
+    setMaterialByProduct(prev => ({ ...prev, [productType]: id }))
     setShareUrl(null)
-  }, [])
+  }, [productType])
 
-  const updateMaterial = useCallback((materialId: string) => {
-    setConfig(prev => ({ ...prev, materialId }))
+  const updatePartColor = useCallback((part: string, hex: string) => {
+    setColorsByProduct(prev => ({ ...prev, [productType]: { ...prev[productType], [part]: hex } }))
     setShareUrl(null)
-  }, [])
+  }, [productType])
 
-  const updateName = useCallback((name: string) => {
-    setConfig(prev => ({ ...prev, name }))
-  }, [])
-
-  const updatePartColor = useCallback((part: ShoePart, hex: string) => {
-    setShoeColors(prev => ({ ...prev, [part]: hex }))
-    setShareUrl(null)
-  }, [])
+  const setView = useCallback((v: ViewId) => {
+    setViewByProduct(prev => ({ ...prev, [productType]: v }))
+  }, [productType])
 
   const resetColors = useCallback(() => {
-    setShoeColors(DEFAULT_SHOE_COLORS)
+    setColorsByProduct(prev => ({ ...prev, [productType]: defaultColors(productType) }))
+    setMaterialByProduct(prev => ({ ...prev, [productType]: PRODUCTS[productType].materials[0].id }))
     setShareUrl(null)
-    // Clear URL params
     window.history.replaceState({}, '', window.location.pathname)
-  }, [])
+  }, [productType])
 
   const generateShareUrl = useCallback((): string => {
     const params = new URLSearchParams()
-    SHOE_PARTS.forEach(part => {
-      params.set(part, shoeColors[part].replace('#', ''))
+    params.set('product', productType)
+    params.set('material', materialId)
+    PRODUCTS[productType].parts.forEach(part => {
+      params.set(part.id, colors[part.id].replace('#', ''))
     })
     const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`
     setShareUrl(url)
     window.history.replaceState({}, '', `?${params.toString()}`)
     return url
-  }, [shoeColors])
+  }, [productType, materialId, colors])
 
   const saveConfig = useCallback(async () => {
     setIsSaving(true)
     setError(null)
     try {
-      const payload = { ...config, shoeColors }
-      const res = await api.post('/api/configurations', payload)
+      const res = await api.post('/api/configurations', config)
       if (!res.ok) throw new Error('Failed to save')
       const data = await res.json()
-      const url = `${window.location.origin}/share/${data.shareId}`
-      setShareUrl(url)
+      setShareUrl(`${window.location.origin}/share/${data.shareId}`)
     } catch {
       setError('Could not save. Please try again.')
     } finally {
       setIsSaving(false)
     }
-  }, [config, shoeColors])
+  }, [config])
 
   return {
     config,
-    shoeColors,
-    shoeView,
+    productType,
+    colors,
+    materialId,
+    view,
     isSaving,
     shareUrl,
     error,
     updateProductType,
-    updateColor,
     updateMaterial,
-    updateName,
+    updateName: setName,
     updatePartColor,
     resetColors,
     generateShareUrl,
-    setShoeView,
+    setView,
     saveConfig,
   }
 }

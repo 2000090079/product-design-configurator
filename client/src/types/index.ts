@@ -1,23 +1,19 @@
-export type ProductType = 'shoe' | 'shirt' | 'pants'
+export type ProductType = 'shoe' | 'shirt' | 'cap' | 'pants'
 
-export type ShoeView = 'left' | 'top' | 'right'
+export type ViewId = 'left' | 'right' | 'top' | 'front' | 'back' | 'side'
 
-export type ShoePart = 'sole' | 'upper' | 'toe_cap' | 'heel' | 'laces' | 'tongue' | 'accent'
+/** Map of part id → hex color for the active product */
+export type PartColors = Record<string, string>
 
-export interface ShoeColors {
-  sole: string
-  upper: string
-  toe_cap: string
-  heel: string
-  laces: string
-  tongue: string
-  accent: string
+export interface PartDef {
+  id: string
+  label: string
+  default: string
 }
 
-export interface ColorOption {
-  id: string
-  name: string
-  hex: string
+export interface ViewDef {
+  id: ViewId
+  label: string
 }
 
 export interface MaterialOption {
@@ -26,16 +22,27 @@ export interface MaterialOption {
   description: string
 }
 
+export interface ProductDef {
+  type: ProductType
+  label: string
+  emoji: string
+  noun: string
+  parts: PartDef[]
+  views: ViewDef[]
+  materials: MaterialOption[]
+}
+
 export interface ProductConfig {
   productType: ProductType
-  colorId: string
   materialId: string
   name: string
-  shoeColors?: ShoeColors
+  colors: PartColors
 }
 
 export interface SavedConfig extends ProductConfig {
   _id: string
   shareId: string
   createdAt: string
+  /** legacy field from shoe-only saves */
+  shoeColors?: PartColors
 }
