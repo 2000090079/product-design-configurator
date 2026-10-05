@@ -261,12 +261,12 @@ curl -X POST https://pdc-server-s19t.onrender.com/api/configurations \
 
 Deployed on **Render** using `render.yaml`:
 
-- **Frontend** (Static Site) — auto-deploys on push to `main`
+- **Frontend** (Static Site) — auto-deploys on push to `master`
 - **Backend** (Web Service) — Node.js, connects to MongoDB Atlas
 
 | Service | URL |
 |---|---|
-| Frontend | https://pdc-client-xxxx.onrender.com |
+| Frontend | https://pdc-client.onrender.com |
 | Backend | https://pdc-server-s19t.onrender.com |
 
 ---
